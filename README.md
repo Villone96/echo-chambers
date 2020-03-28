@@ -1,1 +1,4 @@
-# echo-chamers
+# Master Degree Thesis
+## Echo Chamber Analysis
+### Villa Giacomo
+TODO
