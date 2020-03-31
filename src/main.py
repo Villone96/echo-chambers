@@ -1,8 +1,10 @@
-def start_function():
-    print("hello world")
+from preprocessing import group_by_month_corona
+
+def preprocessing_operation():
+    group_by_month_corona()
 
 if __name__ == '__main__':
-    start_function()
+    preprocessing_operation()
 
 
 
