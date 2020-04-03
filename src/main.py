@@ -1,7 +1,7 @@
-from preprocessing import group_by_month_corona
+from preprocessing.ops_on_raw_data import ops_on_corona
 
 def preprocessing_operation():
-    group_by_month_corona()
+    ops_on_corona()
 
 if __name__ == '__main__':
     preprocessing_operation()
