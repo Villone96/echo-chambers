@@ -1,10 +1,6 @@
 import os
 import pandas as pd
 
-def ops_on_corona():
-    group_by_month_corona()
-    extract_only_en()
-
 def check_directory_absence(name, path):
     os.chdir(path)
     directories = os.listdir()
@@ -12,6 +8,10 @@ def check_directory_absence(name, path):
         return True
     else:
         return False
+
+def ops_on_corona():
+    group_by_month_corona()
+    extract_only_en()
 
 def group_by_month_corona():
     starting_path = os.getcwd()
@@ -79,7 +79,7 @@ def group_by_month_corona():
         final_march.to_csv('March_dataset.csv', encoding='utf-8', index=False)
         all_data.to_csv('All_data.csv', encoding='utf-8', index=False)
 
-        os.chdir(starting_path)
+    os.chdir(starting_path)
     
 def extract_only_en():
     starting_path = os.getcwd()
@@ -95,10 +95,31 @@ def extract_only_en():
         df_only_en['@mentions'] = df_only_en['@mentions'].fillna('self')
         print('ONLY EN TWITTER FINAL SHAPE')
         print(df_only_en.shape)
+        print()
 
         os.chdir(os.path.join(path, 'final_data'))
         df_only_en.to_csv('Final_data.csv', encoding='utf-8', index=False)
 
+    os.chdir(starting_path)
+
+def ops_on_vac():
+    refine_data()
+
+def refine_data():
+    starting_path = os.getcwd()
+    path = os.path.join(starting_path, 'data/vax_no_vax')
+    if check_directory_absence('final_data', path):
+        os.mkdir('final_data')
+        os.chdir(os.path.join(path, 'raw_data'))
+        df = pd.read_csv('./full_data.csv', usecols=['date', 'username', 'replies_count', 'retweets_count',
+                                                      'likes_count', 'hashtags', 'mentions', 'tweet'])
+        os.chdir(os.path.join(path, 'final_data'))
+        df.to_csv('Final_data.csv', encoding='utf-8', index=False)
+
+        print('VACCINATION DATA FINAL SHAPE')
+        print(df.shape)
+
+    os.chdir(starting_path)
 
         
 
