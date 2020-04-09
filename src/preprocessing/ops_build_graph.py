@@ -102,10 +102,10 @@ def build_vaccination_graph(path):
         num_nodes += 1
         mentions = ast.literal_eval(row[3])
         if 'self' in mentions:
-            G = add_edge(G, row, row[1], row[1], num_edge)
+            G = add_edge(G, row, row[1], row[1])
         else:
             for mention in mentions:
-                G = add_edge(G, row, row[1], mention, num_edge)
+                G = add_edge(G, row, row[1], mention)
 
 
     G.name = 'Started Vaccination Graph'
