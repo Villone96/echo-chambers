@@ -114,6 +114,8 @@ def refine_data():
         df = pd.read_csv('./full_data.csv', usecols=['date', 'username', 'replies_count', 'retweets_count',
                                                       'likes_count', 'hashtags', 'mentions', 'tweet'])
         os.chdir(os.path.join(path, 'final_data'))
+        df['mentions'].replace('[]', "['self']", inplace=True)
+        df['hashtags'].replace('[]', "['noOne']", inplace=True)
         df.to_csv('Final_data.csv', encoding='utf-8', index=False)
 
         print('VACCINATION DATA FINAL SHAPE')
