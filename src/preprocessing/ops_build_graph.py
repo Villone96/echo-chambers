@@ -75,7 +75,7 @@ def remove_not_usefull_node_vaccination(G):
 
     return G
 
-def add_edge(G, row, source, destination, num):
+def add_edge(G, row, source, destination):
 
     if G.has_edge(source, destination):
         tweets = list(G[source][destination]['tweets'])
@@ -90,8 +90,7 @@ def add_edge(G, row, source, destination, num):
     else:
         G.add_edge(source, destination, tweets=[row[2]], hashtags=[row[7]])
 
-    num += 1
-    return G, num
+    return G
 
 
 def build_vaccination_graph(path):
@@ -103,10 +102,10 @@ def build_vaccination_graph(path):
         num_nodes += 1
         mentions = ast.literal_eval(row[3])
         if 'self' in mentions:
-            G, num_edge = add_edge(G, row, row[1], row[1], num_edge)
+            G = add_edge(G, row, row[1], row[1], num_edge)
         else:
             for mention in mentions:
-                G, num_edge = add_edge(G, row, row[1], mention, num_edge)
+                G = add_edge(G, row, row[1], mention, num_edge)
 
 
     G.name = 'Started Vaccination Graph'
