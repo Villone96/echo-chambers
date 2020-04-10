@@ -13,30 +13,32 @@ def delete_not_useful_nodes_garimella(G):
     node_to_delete = []
     total_edge = 0
     for node in G.nodes():
-        for edge in G.edges(node, data = True):
+        for edge in G.in_edges(node, data = True):
+            total_edge += edge[2]['weight']
+        for edge in G.out_edges(node, data = True):
             total_edge += edge[2]['weight']
         if total_edge < 3:
             node_to_delete.append(node)
         total_edge = 0
     
     G.remove_nodes_from(node_to_delete)
-
-    G = G.subgraph(max(nx.connected_components(G)))
+    largest_cc = max(nx.weakly_connected_components(G), key=len)
+    G = G.subgraph(largest_cc).copy()
 
     return G
 
 def build_garimella_graph(designed_datasets, path):
     for dataset in designed_datasets: 
         df = pd.read_csv(dataset)
-        G = nx.Graph()
+        G = nx.DiGraph()
         [G.add_edge(row[0], row[1] , weight=row[2]) for _, row in df.iterrows()]
         graph_name = dataset.split('_')[2]
-        G.name = graph_name
+        G.name = 'Starter ' + graph_name
         print(nx.info(G))
         print()
         final_G = delete_not_useful_nodes_garimella(G)
         nx.write_gml(final_G, path + '/' + graph_name + '.gml')
-        final_G.name = graph_name
+        final_G.name = 'Final ' + graph_name
         print(nx.info(final_G))
         print('-----------------------------------------------')
 
@@ -61,32 +63,50 @@ def build_covid_graph():
 def covid_graph():
     pass
 
-def remove_not_usefull_node_vaccination(G):
+def nodes_management(G, option, multi):
     node_to_delete = []
-    for node in G.nodes():
-        if G.degree[node] < 3:
-            node_to_delete.append(node)
+    total_edge = 0
+    if option == 'remove' or 'count':
+        for node in G.nodes():
+            for edge in G.in_edges(node, data = True):
+                if not multi:
+                    total_edge += len(edge[2]['tweets'])
+                else:
+                    total_edge += 1
+            
+            for edge in G.out_edges(node, data = True):
+                if not multi:
+                    total_edge += len(edge[2]['tweets'])
+                else:
+                    total_edge += 1
 
-    G.remove_nodes_from(node_to_delete)
+            if option == 'remove':
+                if total_edge < 3:
+                    node_to_delete.append(node)
+                total_edge = 0
 
-    G = G.subgraph(max(nx.connected_components(G)))
+        if option == 'remove':
+            G.remove_nodes_from(node_to_delete)
+            largest_cc = max(nx.weakly_connected_components(G), key=len)
+            G = G.subgraph(largest_cc).copy()
+            G.name = 'Final Vaccination Graph'
+            return G
+        else:
+            return total_edge
+    else:
+        print('BAD OPTION VALUE - TRY REMOVE OR COUNT')
+        return -1
 
-    G.name = 'Final Vaccination Graph'
 
+def add_edge_multiDiGraph(G, row, source, destination):
+    G.add_edge(source, destination, tweet=row[2], hashtag=row[7])
     return G
 
 def add_edge(G, row, source, destination):
 
     if G.has_edge(source, destination):
-        tweets = list(G[source][destination]['tweets'])
-        tweets.append(row[2]) 
-        hastags = list(G[source][destination]['hashtags'])
-        hastags.append(row[7]) 
-
-
         G[source][destination]['tweets'].append(row[2])
         G[source][destination]['hashtags'].append(row[7])
-
     else:
         G.add_edge(source, destination, tweets=[row[2]], hashtags=[row[7]])
 
@@ -95,7 +115,8 @@ def add_edge(G, row, source, destination):
 
 def build_vaccination_graph(path):
     df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', lineterminator='\n')
-    G = nx.Graph()
+    G = nx.DiGraph()
+    # G = nx.MultiDiGraph()
     num_edge = 0
     num_nodes = 0
     for _, row in df.iterrows():
@@ -103,18 +124,22 @@ def build_vaccination_graph(path):
         mentions = ast.literal_eval(row[3])
         if 'self' in mentions:
             G = add_edge(G, row, row[1], row[1])
+            # G = add_edge_multiDiGraph(G, row, row[1], row[1])
         else:
             for mention in mentions:
                 G = add_edge(G, row, row[1], mention)
+                # G = add_edge_multiDiGraph(G, row, row[1], mention)
 
 
-    G.name = 'Started Vaccination Graph'
+    G.name = 'Starter Vaccination Graph'
     print(nx.info(G))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', False)))
 
-    final_G = remove_not_usefull_node_vaccination(G)
+    final_G = nodes_management(G, 'remove', False)
 
     print()
     print(nx.info(final_G))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', False)))
     print('---------------------------------------')
     nx.write_gml(final_G, path + '/Graph/vaccination.gml')
 
