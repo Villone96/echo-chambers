@@ -67,14 +67,15 @@ def build_covid_graph(path):
         if n_row % 100000 == 0:
             print("WE ARE IN LINE: ", n_row)
         if row[4] == 'self':
-            G = add_edge(G, row[5], 'covid', row[3], row[3])
-            # G = add_edge_multiDiGraph(G, row[5], 'covid', row[3], row[3])
+            G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
+            # G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], row[3], row[3])
         else:
             mentions = row[4].split(',')
             for mention in mentions:
                 mention.strip()
-                G = add_edge(G, row[5], 'covid', row[3], mention)
-                # G = add_edge_multiDiGraph(G, row[5], 'covid', row[3], row[3])
+                G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], mention)
+                # G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], row[3], mention)
+
 
     print('')
     G.name = 'Starter Covid Graph'
@@ -134,24 +135,29 @@ def nodes_management(G, option, multi, threshold = 0):
         return -1
 
 
-def add_edge_multiDiGraph(G, tweet, hashtag, source, destination):
+def add_edge_multiDiGraph(G, tweet, hashtag, likes, retweets, replies , source, destination):
     if hashtag == 'covid':
-        G.add_edge(source, destination, tweet=tweet)
+        G.add_edge(source, destination, tweet=tweet, likes = likes, retweets = retweets)
     else:
-        G.add_edge(source, destination, tweet=tweet, hashtag=hashtag)
+        G.add_edge(source, destination, tweet=tweet, hashtag=hashtag, likes = likes, 
+            retweets = retweets, replies = replies)
         
     return G
 
-def add_edge(G, tweet, hashtag, source, destination):
+def add_edge(G, tweet, hashtag, likes, retweets, replies, source, destination):
     if G.has_edge(source, destination):
         G[source][destination]['tweets'].append(tweet)
+        G[source][destination]['likes'].append(likes)
+        G[source][destination]['retweets'].append(retweets)
         if hashtag != 'covid':
             G[source][destination]['hashtags'].append(hashtag)
+            G[source][destination]['replies'].append(replies)
     else:
         if hashtag == 'covid':
-            G.add_edge(source, destination, tweets=[tweet])
+            G.add_edge(source, destination, tweets=[tweet], likes = [likes], retweets = [retweets])
         else:
-            G.add_edge(source, destination, tweets=[tweet], hashtags=[hashtag])
+            G.add_edge(source, destination, tweets=[tweet], hashtags=[hashtag], likes = [likes], 
+            retweets = [retweets], replies = [replies])
     return G
 
 
@@ -159,17 +165,16 @@ def build_vaccination_graph(path):
     df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', lineterminator='\n')
     G = nx.DiGraph()
     # G = nx.MultiDiGraph()
-    num_edge = 0
     num_nodes = 0
     for _, row in df.iterrows():
         num_nodes += 1
         mentions = ast.literal_eval(row[3])
         if 'self' in mentions:
-            G = add_edge(G, row[2], row[7], row[1], row[1])
+            G = add_edge(G, row[2], row[7], row[6], row[5], row[4], row[1], row[1])
             # G = add_edge_multiDiGraph(G, row[2], row[7], row[1], row[1])
         else:
             for mention in mentions:
-                G = add_edge(G, row[2], row[7], row[1], mention)
+                G = add_edge(G, row[2], row[7], row[6], row[5], row[4], row[1], mention)
                 # G = add_edge_multiDiGraph(G, row[2], row[7], row[1], mention)
 
 
