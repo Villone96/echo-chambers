@@ -93,6 +93,7 @@ def extract_only_en():
         df_only_en = df[filt]
         df_only_en.drop(columns=['language'], inplace=True)
         df_only_en['@mentions'] = df_only_en['@mentions'].fillna('self')
+        df_only_en.dropna()
         print('ONLY EN TWITTER FINAL SHAPE')
         print(df_only_en.shape)
         print()

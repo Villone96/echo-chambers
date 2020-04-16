@@ -59,6 +59,7 @@ def garimella_graph():
 
 def build_covid_graph(path):
     df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', lineterminator='\n')
+    df.dropna(axis='index', how='all', subset=['text_con_hashtag'])
     G = nx.DiGraph()
     # G = nx.MultiDiGraph()
     n_row = 0
@@ -68,13 +69,13 @@ def build_covid_graph(path):
             print("WE ARE IN LINE: ", n_row)
         if row[4] == 'self':
             G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
-            # G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], row[3], row[3])
+            # G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
         else:
             mentions = row[4].split(',')
             for mention in mentions:
                 mention.strip()
                 G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], mention)
-                # G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], row[3], mention)
+                # G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], 0, row[3], mention)
 
 
     print('')
@@ -87,7 +88,7 @@ def build_covid_graph(path):
 
     print()
     print(nx.info(final_G))
-    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', False)))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(final_G, 'count', False)))
     print('---------------------------------------')
     nx.write_gml(final_G, path + '/Graph/covid.gml')
 
@@ -104,6 +105,7 @@ def covid_graph():
 def nodes_management(G, option, multi, threshold = 0):
     node_to_delete = []
     total_edge = 0
+    
     if option == 'remove' or 'count':
         for node in G.nodes():
             for edge in G.in_edges(node, data = True):
@@ -129,35 +131,36 @@ def nodes_management(G, option, multi, threshold = 0):
             G = G.subgraph(largest_cc).copy()
             return G
         else:
-            return total_edge
+            return total_edge/2
     else:
         print('BAD OPTION VALUE - TRY REMOVE OR COUNT')
         return -1
 
 
-def add_edge_multiDiGraph(G, tweet, hashtag, likes, retweets, replies , source, destination):
+def add_edge_multiDiGraph(G, tweet, hashtag, likes, retweets, replies, source, destination):
     if hashtag == 'covid':
-        G.add_edge(source, destination, tweet=tweet, likes = likes, retweets = retweets)
+        G.add_edge(source, destination, tweet = tweet, likes = likes, retweets = retweets)
     else:
-        G.add_edge(source, destination, tweet=tweet, hashtag=hashtag, likes = likes, 
+        G.add_edge(source, destination, tweet = tweet, hashtag = hashtag, likes = likes, 
             retweets = retweets, replies = replies)
-        
     return G
+
 
 def add_edge(G, tweet, hashtag, likes, retweets, replies, source, destination):
     if G.has_edge(source, destination):
         G[source][destination]['tweets'].append(tweet)
         G[source][destination]['likes'].append(likes)
         G[source][destination]['retweets'].append(retweets)
+        G[source][destination]['nums']+= 1
         if hashtag != 'covid':
             G[source][destination]['hashtags'].append(hashtag)
             G[source][destination]['replies'].append(replies)
     else:
         if hashtag == 'covid':
-            G.add_edge(source, destination, tweets=[tweet], likes = [likes], retweets = [retweets])
+            G.add_edge(source, destination, tweets=[tweet], likes = [likes], retweets = [retweets], nums = 1)
         else:
             G.add_edge(source, destination, tweets=[tweet], hashtags=[hashtag], likes = [likes], 
-            retweets = [retweets], replies = [replies])
+            retweets = [retweets], replies = [replies], nums = 1)
     return G
 
 
@@ -166,16 +169,20 @@ def build_vaccination_graph(path):
     G = nx.DiGraph()
     # G = nx.MultiDiGraph()
     num_nodes = 0
+    num_edges = 0
     for _, row in df.iterrows():
         num_nodes += 1
         mentions = ast.literal_eval(row[3])
         if 'self' in mentions:
             G = add_edge(G, row[2], row[7], row[6], row[5], row[4], row[1], row[1])
-            # G = add_edge_multiDiGraph(G, row[2], row[7], row[1], row[1])
+            # G = add_edge_multiDiGraph(G, row[2], row[7], row[6], row[5], row[4], row[1], row[1])
+            num_edges += 1
         else:
             for mention in mentions:
                 G = add_edge(G, row[2], row[7], row[6], row[5], row[4], row[1], mention)
-                # G = add_edge_multiDiGraph(G, row[2], row[7], row[1], mention)
+                # G = add_edge_multiDiGraph(G, row[2], row[7], row[6], row[5], row[4], row[1], mention)
+                num_edges += 1
+                
 
 
     G.name = 'Starter Vaccination Graph'
@@ -183,11 +190,11 @@ def build_vaccination_graph(path):
     print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', False)))
 
     final_G = nodes_management(G, 'remove', False, 3)
-    G.final_G = 'Final Vaccination Graph'
+    final_G.name = 'Final Vaccination Graph'
 
     print()
     print(nx.info(final_G))
-    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', False)))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(final_G, 'count', False)))
     print('---------------------------------------')
     nx.write_gml(final_G, path + '/Graph/vaccination.gml')
 
