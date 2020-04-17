@@ -59,36 +59,36 @@ def garimella_graph():
 
 def build_covid_graph(path):
     df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', lineterminator='\n')
-    df.dropna(axis='index', how='all', subset=['text_con_hashtag'])
-    G = nx.DiGraph()
-    # G = nx.MultiDiGraph()
+    df.dropna(axis='index', how='all', subset=['text_con_hashtag'], inplace = True)
+    # G = nx.DiGraph()
+    G = nx.MultiDiGraph()
     n_row = 0
     for _, row in df.iterrows():
         n_row += 1
         if n_row % 100000 == 0:
             print("WE ARE IN LINE: ", n_row)
         if row[4] == 'self':
-            G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
-            # G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
+            # G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
+            G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
         else:
             mentions = row[4].split(',')
             for mention in mentions:
                 mention.strip()
-                G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], mention)
-                # G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], 0, row[3], mention)
+                # G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], mention)
+                G = add_edge_multiDiGraph(G, row[5], 'covid', row[0], row[2], 0, row[3], mention)
 
 
     print('')
     G.name = 'Starter Covid Graph'
     print(nx.info(G))
-    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', False)))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', True)))
 
-    final_G = nodes_management(G, 'remove', False, 10)
+    final_G = nodes_management(G, 'remove', True, 10)
     final_G.name = 'Final Covid Graph'
 
     print()
     print(nx.info(final_G))
-    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(final_G, 'count', False)))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(final_G, 'count', True)))
     print('---------------------------------------')
     nx.write_gml(final_G, path + '/Graph/covid.gml')
 
