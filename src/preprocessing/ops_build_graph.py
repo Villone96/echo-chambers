@@ -61,41 +61,88 @@ def garimella_graph():
 def build_covid_graph(path):
     df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', lineterminator='\n')
     df.dropna(axis='index', how='all', subset=['text_con_hashtag'], inplace = True)
-    # G = nx.DiGraph()
-    G = nx.MultiDiGraph()
+    G = nx.DiGraph()
+    # G = nx.MultiDiGraph()
     for _, row in tqdm(df.iterrows(), desc = "Rows processed"):
-        if row[4] == 'self':
-            G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3], True)
+        if row[4] == 'self' and row[4] != '':
+            G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], row[3], False)
         else:
             mentions = row[4].split(',')
             for mention in mentions:
                 mention = mention.strip()
-                if mention != '' and mention != '@':
-                    G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], mention, True)
+                if mention != '' and mention != '@' :
+                    G = add_edge(G, row[5], 'covid', row[0], row[2], 0, row[3], mention, False)
 
 
     print('')
     G.name = 'Starter Covid Graph'
     print(nx.info(G))
-    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', True)))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', False)))
 
-    final_G = nodes_management(G, 'remove', True, 10)
+    final_G = nodes_management(G, 'remove', False, 10)
     final_G.name = 'Final Covid Graph'
 
     print()
     print(nx.info(final_G))
-    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(final_G, 'count', True)))
-    print('---------------------------------------')
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(final_G, 'count', False)))
     nx.write_gml(final_G, path + '/Graph/covid.gml')
+
+def get_only_date(date):
+    date = str(date).split()[0]
+    return date
+
+def get_metadata():
+    user_metadata = pd.read_csv('./user_metadata/user_metadata.csv', engine='python')
+    user_metadata.fillna(value = pd.np.nan, inplace = True)
+
+    user_metadata['description'] = user_metadata['description'].fillna('NoDescription')
+    user_metadata['location'] = user_metadata['location'].fillna('NoLocation')
+    user_metadata['favourites_count'] = user_metadata['favourites_count'].fillna('-1')
+    user_metadata['followers_count'] = user_metadata['followers_count'].fillna('-1')
+    user_metadata['friends_count'] = user_metadata['friends_count'].fillna('-1')
+    user_metadata['listed_count'] = user_metadata['listed_count'].fillna('-1')
+    user_metadata['statuses_count'] = user_metadata['statuses_count'].fillna('-1')
+    user_metadata['verified'] = user_metadata['verified'].fillna('-1')
+
+    user_metadata['screen_name'] = user_metadata['screen_name'].str.lower()
+    user_metadata['created_at'] = user_metadata['created_at'].apply(get_only_date)
+
+    user_metadata = user_metadata.drop_duplicates(subset='screen_name', keep='last')
+    user_metadata = user_metadata.rename(columns={'created_at': 'created', 'default_profile_image': 'DefaultImage', 
+                                                  'favourites_count': 'numLikes', 'followers_count': 'numFollowers', 'friends_count': 'numFollowing',
+                                                  'listed_count': 'numGroups', 'statuses_count': 'numStatuses', 'default_profile': 'defaultProfile'})
+    user_metadata.set_index('screen_name', inplace = True)
+    return user_metadata
+
+def add_meta(path):
+    G = nx.read_gml('./Graph/DG_covid.gml')
+    user_metadata_clean = get_metadata()
+
+    not_included = 0
+    for node in tqdm(G.nodes(), desc = " Node processed"):
+        for column in user_metadata_clean.columns:
+            try:
+                G.nodes[node][column] = user_metadata_clean.loc[node][column]
+            except:
+                not_included += 1
+                break
+    print()
+    print("TOTAL NUMBER OF NODES NOT LABELED:{:>10}".format(not_included))
+    print("TOTAL NUMBER OF LABELED:          {:>10}".format(len(G) - not_included))
+    nx.write_gml(G, path + '/Graph/DG_covid_data.gml')
 
 def covid_graph():
     starting_path = os.getcwd()
     path = os.path.join(starting_path, 'data/corona_virus')
+    meta = False
     if check_directory_absence('Graph', path):
         os.mkdir('Graph')
         os.chdir(os.path.join(path, 'final_data'))
         build_covid_graph(path)
-
+        meta = True
+    if meta:
+        add_meta(path)
+    print('---------------------------------------')
     os.chdir(starting_path)
 
 def nodes_management(G, option, multi, threshold = 0):
@@ -149,6 +196,8 @@ def clean(username):
     username = username.split('より')[0]
     username = username.split('さんから')[0] 
     username = username.split('から')[0] 
+    username = username.split(';')[0] 
+    username = username.split('*')[0] 
     if username[-3:] == 'pic' and username.lower() != 'apic':
         username = username.split('pic')[0]
     username = username.lower()
@@ -184,32 +233,32 @@ def add_edge(G, tweet, hashtag, likes, retweets, replies, source, destination, m
 
 def build_vaccination_graph(path):
     df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', lineterminator='\n')
-    # G = nx.DiGraph()
-    G = nx.MultiDiGraph()
+    G = nx.DiGraph()
+    # G = nx.MultiDiGraph()
     num_nodes = 0
     num_edges = 0
     for _, row in tqdm(df.iterrows(), desc="Rows processed"):
         num_nodes += 1
         mentions = ast.literal_eval(row[3])
         if 'self' in mentions:
-            G = add_edge(G, row[2], row[7], row[6], row[5], row[4], row[1], row[1], True)
+            G = add_edge(G, row[2], row[7], row[6], row[5], row[4], row[1], row[1], False)
             num_edges += 1
         else:
             for mention in mentions:
-                G = add_edge(G, row[2], row[7], row[6], row[5], row[4], row[1], mention, True)
+                G = add_edge(G, row[2], row[7], row[6], row[5], row[4], row[1], mention, False)
                 num_edges += 1
                 
 
     G.name = 'Starter Vaccination Graph'
     print(nx.info(G))
-    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', True)))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(G, 'count', False)))
 
-    final_G = nodes_management(G, 'remove', True, 3)
+    final_G = nodes_management(G, 'remove', False, 3)
     final_G.name = 'Final Vaccination Graph'
 
     print()
     print(nx.info(final_G))
-    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(final_G, 'count', True)))
+    print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(final_G, 'count', False)))
     print('---------------------------------------')
     nx.write_gml(final_G, path + '/Graph/vaccination.gml')
 
