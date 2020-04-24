@@ -1,3 +1,4 @@
+import igraph
 
 def start_community_detection():
     garimella_graph()
