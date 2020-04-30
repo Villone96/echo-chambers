@@ -22,9 +22,7 @@ def garimella_graph():
         os.mkdir('Graph')
         os.chdir(os.path.join(path, 'retweet_networks'))
 
-        designed_datasets = ['retweet_graph_ukraine_threshold_largest_CC.txt', 'retweet_graph_gunsense_threshold_largest_CC.txt',
-                          'retweet_graph_baltimore_threshold_largest_CC.txt', 'retweet_graph_mothersday_threshold_largest_CC.txt',
-                          'retweet_graph_jurassicworld_threshold_largest_CC.txt']
+        designed_datasets = os.listdir(os.path.join(path, 'retweet_networks'))
 
         build_garimella_graph(designed_datasets, os.path.join(path, 'Graph'))
 
@@ -32,18 +30,18 @@ def garimella_graph():
 
 def build_garimella_graph(designed_datasets, path):
     for dataset in designed_datasets: 
-        df = pd.read_csv(dataset)
+        df = pd.read_csv(dataset, header=None)
         G_dg = nx.Graph()
 
-        [G_dg.add_edge(row[0], row[1] , weight=row[2]) for _, row in df.iterrows()]
+        [G_dg.add_edge(row[0], row[1], weight=row[2]) for _, row in df.iterrows()]
         graph_name = dataset.split('_')[2]
-        G_dg.name = 'Starter direct graph' + graph_name
+        G_dg.name = 'Starter graph' + graph_name
         print(nx.info(G_dg))
         print()
 
-        G_dg = delete_not_useful_nodes_garimella(G_dg)
+        # G_dg = delete_not_useful_nodes_garimella(G_dg)
         nx.write_gml(G_dg, path + '/' + graph_name + '.gml')
-        G_dg.name = 'Final direct graph' + graph_name
+        G_dg.name = 'Final graph' + graph_name
         print(nx.info(G_dg))
         print()
 
@@ -56,12 +54,12 @@ def build_garimella_graph(designed_datasets, path):
 def covid_graph():
     starting_path = os.getcwd()
     path = os.path.join(starting_path, 'data/corona_virus')
-    meta = True
+    meta = False
     if check_directory_absence('Graph', path):
         os.mkdir('Graph')
         os.chdir(os.path.join(path, 'final_data'))
         build_covid_graph(path)
-        meta = False
+        meta = True
     if meta:
         add_meta(path)
     print('---------------------------------------')
