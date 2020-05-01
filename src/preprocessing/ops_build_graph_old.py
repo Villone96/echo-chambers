@@ -1,13 +1,13 @@
 from preprocessing.ops_on_raw_data import check_directory_absence
 from preprocessing.utilities import (get_only_date, get_metadata, 
-                                    clean, manage_and_save, add_edge, 
+                                    clean, manage_and_save, add_edge,
+                                    delete_not_useful_nodes_garimella, 
                                     create_multi_graph)
 import networkx as nx 
 import pandas as pd
 from tqdm import tqdm
 import os
 import ast
-import time
 
 def graph_ops():
     garimella_graph()
@@ -39,6 +39,7 @@ def build_garimella_graph(designed_datasets, path):
         print(nx.info(G_dg))
         print()
 
+        # G_dg = delete_not_useful_nodes_garimella(G_dg)
         nx.write_gml(G_dg, path + '/' + graph_name + '.gml')
         G_dg.name = 'Final graph' + graph_name
         print(nx.info(G_dg))
@@ -69,23 +70,28 @@ def build_covid_graph(path):
     df.dropna(axis='index', how='all', subset=['text_con_hashtag'], inplace = True)
 
     G_dg = nx.DiGraph()
+    G_multi = nx.MultiGraph()
     G_g = nx.Graph()
 
     for _, row in tqdm(df.iterrows(), desc = "Rows processed"):
         if row[4] == 'self' and row[4] != '':
             G_dg = add_edge(G_dg, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
+            G_multi = add_edge(G_multi, None, None, None, None, None, row[3], row[3])
+            G_g = add_edge(G_g, None, None, None, None, None, row[3], row[3])
         else:
             mentions = row[4].split(',')
             for mention in mentions:
                 mention = mention.strip()
                 if mention != '' and mention != '@' :
                     G_dg = add_edge(G_dg, row[5], 'covid', row[0], row[2], 0, row[3], mention)
+                    G_multi = add_edge(G_multi, None, None, None, None, None, row[3], mention)
                     G_g = add_edge(G_g, None, None, None, None, None, row[3], mention)
 
     G_dg.name = 'Starter covid Direct Graph'
+    G_multi.name = 'Starter covid Multi Graph'
     G_g.name = 'Starter covid Graph'
 
-    graphs = [G_dg, G_g]
+    graphs = [G_dg, G_multi, G_g]
     manage_and_save(graphs, path)
 
 
@@ -121,19 +127,24 @@ def build_vaccination_graph(path):
     df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', lineterminator='\n')
 
     G_dg = nx.DiGraph()
+    G_multi = nx.MultiGraph()
     G_g = nx.Graph()
 
     for _, row in tqdm(df.iterrows(), desc="Rows processed"):
         mentions = ast.literal_eval(row[3])
         if 'self' in mentions:
             G_dg = add_edge(G_dg, row[2], row[7], row[6], row[5], row[4], row[1], row[1])
+            # G_multi = add_edge(G_multi, None, None, None, None, None, row[1], row[1])
+            G_g = add_edge(G_g, None, None, None, None, None, row[1], row[1])
         else:
             for mention in mentions:
                 G_dg = add_edge(G_dg, row[2], row[7], row[6], row[5], row[4], row[1], mention)
+                # G_multi = add_edge(G_multi, None, None, None, None, None, row[1], mention)
                 G_g = add_edge(G_g, None, None, None, None, None, row[1], mention)
                 
     G_dg.name = 'Starter vax Direct Graph'
+    G_multi.name = 'Starter vax Multi Graph'
     G_g.name = 'Starter vax Graph'
 
-    graphs = [G_dg, G_g]
+    graphs = [G_dg, G_multi, G_g]
     manage_and_save(graphs, path)

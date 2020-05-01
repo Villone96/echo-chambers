@@ -52,39 +52,28 @@ def clean(username):
     username = username.lower()
     return username
 
-def nodes_management(G, option, threshold = 0):
-    edge_to_delete = []
+def nodes_management(G, option, multi,threshold = 0):
+    node_to_delete = []
     total_edge = 0
-    real_edge = 0
-  
+    
     if option == 'remove' or 'count':
-        edge_to_delete = list()
-        for edge in G.edges(data=True):
+        for node in G.nodes():
             if type(G).__name__ == 'DiGraph':
-                real_edge += G.out_edges[edge[0], edge[1]]['weight']
-                total_edge += G.out_edges[edge[0], edge[1]]['weight']
-                if G.has_edge(edge[1], edge[0]):
-                    total_edge += G.out_edges[edge[1], edge[0]]['weight']
-                
-                if option == 'remove':
-                    if total_edge < threshold:
-                        edge_to_delete.append((edge[0], edge[1]))
-                        if G.has_edge(edge[1], edge[0]) and edge[0] != edge[1]:
-                            edge_to_delete.append((edge[1], edge[0]))
-                    total_edge = 0
+                total_edge += G.in_degree([node], weight='weight')[node]
+                total_edge += G.out_degree([node], weight='weight')[node]
             else:
-                if option == 'remove':
-                    if edge[2]['weight'] < threshold:
-                        edge_to_delete.append((edge[0], edge[1]))
+                if multi:
+                    total_edge += G.degree(node)
                 else:
-                    total_edge += edge[2]['weight']
+                    total_edge += G.degree([node], weight='weight')[node]
+
+            if option == 'remove':
+                if total_edge < threshold:
+                    node_to_delete.append(node)
+                total_edge = 0
 
         if option == 'remove':
-            for edge in edge_to_delete:
-                try:
-                    G.remove_edge(*edge)
-                except:
-                    pass
+            G.remove_nodes_from(node_to_delete)
             if type(G).__name__ == 'DiGraph':
                 largest_cc = max(nx.weakly_connected_components(G), key=len)
             else:
@@ -93,10 +82,7 @@ def nodes_management(G, option, threshold = 0):
             G = G.subgraph(largest_cc).copy()
             return G
         else:
-            if type(G).__name__ == 'DiGraph':
-                return real_edge
-            else:
-                return total_edge
+            return total_edge/2
     else:
         print('BAD OPTION VALUE - TRY REMOVE OR COUNT')
         return -1
@@ -121,47 +107,61 @@ def add_edge(G, tweet, hashtag, likes, retweets, replies, source, destination):
                 G.add_edge(source, destination, tweets=[tweet], hashtags=[hashtag], likes = [likes], 
                 retweets = [retweets], replies = [replies], weight = 1.0)
     else:
-        if G.has_edge(source, destination):
-            G[source][destination]['weight'] += 1.0
-        else:
-            G.add_edge(source, destination, weight = 1.0)
+        if type(G).__name__ == 'MultiGraph':
+            G.add_edge(source, destination)
+        elif type(G).__name__ == 'Graph':
+            if G.has_edge(source, destination):
+                G[source][destination]['weight'] += 1.0
+            else:
+                G.add_edge(source, destination, weight = 1.0)
     return G
 
 def manage_and_save(graphs, path):
 
     for graph in graphs: 
 
-        name = 'Final_'+type(graph).__name__   
-        suffix = ''     
-        if 'vax' in graph.name:
-            threshold = 1
-            name = name + '_Vax'
-            suffix = '_Vax.gml'
+        name = 'Final_'+type(graph).__name__
+        if 'Multi' in graph.name:
+            multi = True
         else:
+            multi = False
+        
+        if 'vax' in graph.name:
             threshold = 3
+            name = name + '_Vax'
+        else:
+            threshold = 10
             name = name + '_Covid'
-            suffix = '_Covid.gml'
 
         name = name + '.gml'
 
         print(nx.info(graph))
-        print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(graph, 'count')))
+        print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(graph, 'count', multi)))
         print()
 
-        graph = nodes_management(graph, 'remove', threshold)
+        graph = nodes_management(graph, 'remove', multi, threshold)
         graph.name = graph.name.replace('Starter', 'Final')
         print(nx.info(graph))
-        print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(graph, 'count')))
+        print("{:<20}{:<8}".format('Real number of Edges: ', nodes_management(graph, 'count', multi)))
         print()
-        if 'Direct' not in graph.name:
-            G_multi = nx.MultiGraph()
-            G_multi = create_multi_graph(graph)
-            G_multi.name = f'Final_MultiGraph{suffix}'
-            nx.write_gml(G_multi, path + '/Graph/' + G_multi.name)
-            print(nx.info(G_multi))
-            print()        
 
-        nx.write_gml(graph, f'{path}/Graph/{name}')
+        nx.write_gml(graph, path + '/Graph/' + name)
+
+
+def delete_not_useful_nodes_garimella(G):
+    node_to_delete = []
+    total_edge = 0
+    for node in G.nodes():
+        total_edge += G.degree([node], weight='weight')[node]
+        if total_edge < 3:
+            node_to_delete.append(node)
+        total_edge = 0
+    
+    G.remove_nodes_from(node_to_delete)
+    largest_cc = max(nx.connected_components(G), key=len)
+    G = G.subgraph(largest_cc).copy()
+
+    return G
 
 def create_multi_graph(G):
     G_multi = nx.MultiGraph()
