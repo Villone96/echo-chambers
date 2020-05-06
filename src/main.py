@@ -14,7 +14,7 @@ def community_detection():
 
 if __name__ == '__main__':
     preprocessing_operation()
-    #community_detection()
+    community_detection()
 
 
 
