@@ -1,12 +1,17 @@
-import igraph as ig
-import networkx as nx
-from networkx.algorithms.community.quality import coverage 
 import os
 from tqdm import tqdm
-import time
+from datetime import datetime
 import logging
 
+from community.com_utilities import community_detection
+from community.log_writer import log_write_start_end
+
+
 def start_community_detection():
+    files = os.listdir(os.getcwd())
+    logging.basicConfig(filename='community_log.log', level=logging.INFO, format='%(message)s')
+    today = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    logging.info(f'RUN TIME: {today}')
     garimella_graph()
     covid_graph()
     vax_graph()
@@ -16,29 +21,18 @@ def garimella_graph():
     path = os.path.join(starting_path, 'data/garimella_data/Graph')
     os.chdir(path)
     list_of_graph = os.listdir(path)
-    logging.basicConfig(filename='Garimella_logfile.log', level=logging.INFO, format='%(asctime)s:%(message)s')
+    log_write_start_end(True, 'GARIMELLA GRAPH')
     for graph in list_of_graph:
         name = graph
-        if 'Multi' in name or 'mothers' in name: 
+        if 'Multi' in name: 
             pass
         else:
-            print(f'{name} graph')
-            graph = nx.read_gml(f'{name}')
-            multi = nx.read_gml(f'Multi_{name}')
-            print(nx.info(graph))
-            print(nx.info(multi))
-            print()
-            graph_info = f'\nGraph Info\n{nx.info(graph)}\nMulti graph Info\n{nx.info(multi)}\n\n\n'
-            logging.info(graph_info)
-
-            
-
-
-
-
+            print(name)
+            name = name.split('.')[0]
+            community_detection(name)
 
     os.chdir(starting_path)
-
+    log_write_start_end(False)
 
 
 def covid_graph():
