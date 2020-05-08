@@ -112,10 +112,16 @@ def extract_community(G, id_com):
     subgraph = G.subgraph(community_node)
     return subgraph
 
-def community_detection(name):
+def community_detection(name, opt):
     #### READING GRAPH
-    graph = nx.read_gml(f'{name}.gml')
-    multi = nx.read_gml(f'Multi_{name}.gml')
+    ## OPT == 0 --> Garimella ELSE VAX/COVID
+    if opt == 0:
+        graph = nx.read_gml(f'{name}.gml')
+        multi = nx.read_gml(f'Multi_{name}.gml')
+    else:
+        graph = nx.read_gml(f'Final_Graph_{name}.gml')
+        multi = nx.read_gml(f'Final_MultiGraph_{name}.gml')
+
 
     log_write_graph_info(name, nx.info(graph), nx.info(multi))
     #### METIS
@@ -125,7 +131,10 @@ def community_detection(name):
     log_write_com_result('Metis', info, mod, cov, exe_time)
     
     #### FLUID
-    list_com_fluid, set_com_fluid, info, exe_time = get_communities(multi, 'Fluid', 2, 1)
+    seed = 1
+    if opt == 1:
+        seed = 18
+    list_com_fluid, set_com_fluid, info, exe_time = get_communities(multi, 'Fluid', 2, seed)
     mod = modularity(list_com_fluid, graph, weight='weight')
     cov = coverage(multi, set_com_fluid)
     log_write_com_result('Fluid', info, mod, cov, exe_time)

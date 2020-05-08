@@ -7,7 +7,10 @@ def log_write_start_end(start, data_name = ''):
         print(data_name)
         logging.info(f'--------------------{data_name}--------------------')
     else:
-        logging.info('----------------------------------------')
+        if data_name == 'Covid':
+            logging.info(f'---------------------------------------------------------')
+        else:
+            logging.info(f'------------------------------------------------------')
 
 def log_write_graph_info(graph_name, info_graph, info_multi):
     print(f'{graph_name.upper()} GRAPH')

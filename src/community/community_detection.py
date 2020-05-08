@@ -29,15 +29,28 @@ def garimella_graph():
         else:
             print(name)
             name = name.split('.')[0]
-            community_detection(name)
+            community_detection(name, 0)
 
     os.chdir(starting_path)
     log_write_start_end(False)
 
 
 def covid_graph():
-    pass
+    starting_path = os.getcwd()
+    path = os.path.join(starting_path, 'data/corona_virus/Graph')
+    os.chdir(path)             
+    log_write_start_end(True, 'COVID-19 GRAPH')
+    community_detection('Covid', 1)
+    os.chdir(starting_path)
+    log_write_start_end(False, 'Covid')
+
 
 def vax_graph():
-    pass
+    starting_path = os.getcwd()
+    path = os.path.join(starting_path, 'data/vax_no_vax/Graph')
+    os.chdir(path)             
+    log_write_start_end(True, 'VACCINATION GRAPH')
+    community_detection('Vax', 1)
+    os.chdir(starting_path)
+    log_write_start_end(False, 'Vax')
     
