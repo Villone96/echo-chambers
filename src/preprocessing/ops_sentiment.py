@@ -175,7 +175,7 @@ def covid():
             CompGraph.nodes[node]['sentiment'] = new_value
 
     for edge in CompGraph.edges(data=True):
-        sentiment_diff = 10 - abs(CompGraph.nodes[edge[0]]['sentiment'] + CompGraph.nodes[edge[1]]['sentiment'])
+        sentiment_diff = 10 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
         CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = CompGraph[edge[0]][edge[1]]['weight'] + sentiment_diff
 
     nx.write_gml(CompGraph, 'Final_Graph_Covid.gml')
