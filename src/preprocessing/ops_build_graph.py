@@ -2,6 +2,7 @@ from preprocessing.ops_on_raw_data import check_directory_absence
 from preprocessing.utilities import (get_only_date, get_metadata, 
                                     clean, manage_and_save, add_edge, 
                                     create_multi_graph)
+from preprocessing.ops_sentiment import add_sentiment
 import networkx as nx 
 import pandas as pd
 from tqdm import tqdm
@@ -13,6 +14,7 @@ def graph_ops():
     garimella_graph()
     covid_graph()
     vax_graph()
+    add_sentiment()
 
 ### GARIMELLA 19 GRAPHS
 def garimella_graph():
