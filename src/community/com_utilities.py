@@ -4,8 +4,22 @@ from tqdm import tqdm
 import networkx.algorithms.community as nx_comm
 import nxmetis
 import time
+from math import ceil
 
-from community.log_writer import log_write_com_result, log_write_graph_info
+from community.log_writer import log_write_com_result, log_write_graph_info, print_difference
+
+
+def create_multi_graph(G):
+    G_multi = nx.MultiGraph()
+    for edge in G.edges(data = True):
+        weight = ceil(edge[2]['weightWithSentiment'])
+        if weight > 0:
+            for _ in range(int(weight)):
+                G_multi.add_edge(edge[0], edge[1])
+        else:
+            G_multi.add_edge(edge[0], edge[1])
+    
+    return G_multi
 
 
 def modularity(partition, graph, weight='weight'):
@@ -55,7 +69,7 @@ def get_community_dict_and_set(list_com):
     return commun_dict, commun_list
 
 
-def get_communities(G, alg, k = 0, seed = 0):
+def get_communities(G, alg, sent, k = 0, seed = 0):
     raw_partition = list()
     list_com = list()
     set_com = set()
@@ -63,11 +77,16 @@ def get_communities(G, alg, k = 0, seed = 0):
     start = 0
     end = 0
 
+    if sent:
+        weight = 'weightWithSentiment'
+    else:
+        weight = 'weight'
+
     if alg == 'Metis':
         for edge in G.edges(data=True):
-            G[edge[0]][edge[1]]['weight'] = int(G[edge[0]][edge[1]]['weight'])
+            G[edge[0]][edge[1]][weight] = int(G[edge[0]][edge[1]][weight])
         start = time.time()
-        raw_partition = nxmetis.partition(G, 2, edge_weight='weight', node_weight=None, node_size=None)
+        raw_partition = nxmetis.partition(G, 2, edge_weight=weight, node_weight=None, node_size=None)
         end = time.time()
         list_com, set_com = get_community_dict_and_set(raw_partition[1])
 
@@ -112,7 +131,7 @@ def extract_community(G, id_com):
     subgraph = G.subgraph(community_node)
     return subgraph
 
-def community_detection(name, opt):
+def community_detection(name, opt, sent=False):
     #### READING GRAPH
     ## OPT == 0 --> Garimella ELSE VAX/COVID
     if opt == 0:
@@ -121,20 +140,45 @@ def community_detection(name, opt):
     else:
         graph = nx.read_gml(f'Final_Graph_{name}.gml')
         multi = nx.read_gml(f'Final_MultiGraph_{name}.gml')
-
-
-    log_write_graph_info(name, nx.info(graph), nx.info(multi))
+    if not sent:
+        log_write_graph_info(name, nx.info(graph), nx.info(multi))
     #### METIS
-    list_com_metis, set_com_metis, info, exe_time = get_communities(graph, 'Metis')
-    mod = modularity(list_com_metis, graph, weight='weight')
-    cov = coverage(multi, set_com_metis)
-    log_write_com_result('Metis', info, mod, cov, exe_time)
+    list_com_metis, set_com_metis, info, exe_time = get_communities(graph, 'Metis', sent)
+    mod_m = modularity(list_com_metis, graph, weight='weight')
+    cov_m = coverage(multi, set_com_metis)
+    log_write_com_result('Metis', info, mod_m, cov_m, exe_time, opt, sent)
     
     #### FLUID
     seed = 1
     if opt == 1:
         seed = 18
-    list_com_fluid, set_com_fluid, info, exe_time = get_communities(multi, 'Fluid', 2, seed)
-    mod = modularity(list_com_fluid, graph, weight='weight')
-    cov = coverage(multi, set_com_fluid)
-    log_write_com_result('Fluid', info, mod, cov, exe_time)
+
+    if sent:
+        multi_fluid = create_multi_graph(graph)
+    else:
+        multi_fluid = multi
+
+    list_com_fluid, set_com_fluid, info, exe_time = get_communities(multi_fluid, 'Fluid', sent, 2, seed)
+    mod_f = modularity(list_com_fluid, graph, weight='weight')
+    cov_f = coverage(multi, set_com_fluid)
+    log_write_com_result('Fluid', info, mod_f, cov_f, exe_time, opt, sent)
+    return [list_com_metis, mod_m, cov_m], [list_com_fluid, mod_f, cov_f]
+
+
+def note_difference(info_no_sent, info_sent, alg):
+
+    same = 0
+    notsame = 0
+    no_sent = info_no_sent[0]
+    sent = info_sent[0]
+    for user in no_sent:
+        if no_sent[user] == sent[user]:
+            same += 1
+        else:
+            notsame += 1
+
+    mod_difference = info_sent[1] - info_no_sent[1]
+    cov_difference = info_sent[2] - info_no_sent[2]
+
+    print_difference(alg, same, notsame, mod_difference, cov_difference)
+    

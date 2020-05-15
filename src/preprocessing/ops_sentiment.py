@@ -14,6 +14,7 @@ from nltk.stem.lancaster import LancasterStemmer
 import networkx as nx
 from tqdm import tqdm
 import re 
+import pickle
 
 
 
@@ -23,73 +24,12 @@ def add_sentiment():
     covid()
     vax()
 
+def get_stopword():
+    with open("./preprocessing/stopwords.txt", "rb") as fp:
+        stop_words = pickle.load(fp)
+    return stop_words
 
-
-def covid():
-    starting_path = os.getcwd()
-    path = os.path.join(starting_path, 'data/corona_virus/Graph')
-    os.chdir(os.path.join(path))
-
-    DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
-    print(nx.info(DiGraph))
-    print()
-    CompGraph = nx.read_gml('Final_Graph_Covid.gml')
-    print(nx.info(CompGraph))
-    print()
-    
-    stop = stopwords.words('english')
-    stop = set(stop)
-    stop.add("The")
-    stop.add("And")
-    stop.add("I")
-    stop.add("twitter.com/RVAwonk/status/1232364544879665152")
-    stop.add(":/")
-    stop.add("")
-    stop.add("J")
-    stop.add("K")
-    stop.add("I'd")
-    stop.add("That's")
-    stop.add("\x81")
-    stop.add("It")
-    stop.add("I'm")
-    stop.add("...")
-    stop.add("")
-    stop.add("\x89")
-    stop.add("ĚĄ")
-    stop.add("it's")
-    stop.add("ă")
-    stop.add("\x9d")
-    stop.add("âÂĺ")
-    stop.add("Ě")
-    stop.add("˘")
-    stop.add("Â")
-    stop.add("âÂ")
-    stop.add("Ň")
-    stop.add("http")
-    stop.add("https")
-    stop.add("co")
-    stop.add("000")
-    stop.add("Ň")
-    stop.add("Ň")
-    stop.add("Ň")
-    stop.add("â")
-    stop.add('100')
-    stop.add('冠状病毒')
-    stop.add('https://youtu.be/WWSNqdnO_p0')
-    stop.add('помощью')
-    stop.add('我给我附近的医院捐了一个口罩')
-    stop.add('你呢')
-    stop.add('с')
-    stop.add('’')
-    stop.add('/8')
-    stop.add('2TJZw')
-    stop.add('\u2066')
-    stop.add('..')
-    stop.add('，')
-    stop.add('？')
-    stop.add('…')
-    stop = list(stop)
-
+def add_sent_weight(DiGraph, CompGraph, stop_words, name):
     total_tweet = 0
     punctuation = string.punctuation
     afinn = Afinn()
@@ -131,9 +71,9 @@ def covid():
             not_number = [token for token in not_urls if not token.isdigit()]
             tweets_tokenized[sentence] = not_number
         
-        tweets_tokenized_stop = tweets_tokenized.apply(lambda x: [item for item in x if item not in stop])
+        tweets_tokenized_stop = tweets_tokenized.apply(lambda x: [item for item in x if item not in stop_words])
         tweets_tokenized_stop_punct = tweets_tokenized_stop.apply(lambda x: [item for item in x if item not in punctuation])
-        tweets_tokenized_final = tweets_tokenized_stop_punct.apply(lambda x: [item for item in x if item not in stop])
+        tweets_tokenized_final = tweets_tokenized_stop_punct.apply(lambda x: [item for item in x if item not in stop_words])
         
         list_done = list(tweets_tokenized_final)
         sentence = ""
@@ -178,10 +118,40 @@ def covid():
         sentiment_diff = 10 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
         CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = CompGraph[edge[0]][edge[1]]['weight'] + sentiment_diff
 
-    nx.write_gml(CompGraph, 'Final_Graph_Covid.gml')
-    nx.write_gml(DiGraph, 'Final_DiGraph_Covid.gml')
+    nx.write_gml(CompGraph, f'Final_Graph_{name}.gml')
+    nx.write_gml(DiGraph, f'Final_DiGraph_{name}.gml')
+
+
+def covid():
+    starting_path = os.getcwd()
+    stop_words = get_stopword()
+    path = os.path.join(starting_path, 'data/corona_virus/Graph')
+    os.chdir(os.path.join(path))
+
+    CompGraph = nx.read_gml('Final_Graph_Covid.gml')
+    if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
+        print(nx.info(CompGraph))
+        print()
+        DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
+        print(nx.info(DiGraph))
+        print()
+        add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
 
     os.chdir(starting_path)
 
 def vax():
-    pass
+    starting_path = os.getcwd()
+    stop_words = get_stopword()
+    path = os.path.join(starting_path, 'data/vax_no_vax/Graph')
+    os.chdir(os.path.join(path))
+
+    CompGraph = nx.read_gml('Final_Graph_Vax.gml')
+    if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
+        print(nx.info(CompGraph))
+        print()
+        DiGraph = nx.read_gml('Final_DiGraph_Vax.gml')
+        print(nx.info(DiGraph))
+        print()
+        add_sent_weight(DiGraph, CompGraph, stop_words, 'Vax')
+
+    os.chdir(starting_path)

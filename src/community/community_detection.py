@@ -3,7 +3,7 @@ from tqdm import tqdm
 from datetime import datetime
 import logging
 
-from community.com_utilities import community_detection
+from community.com_utilities import community_detection, note_difference
 from community.log_writer import log_write_start_end
 
 
@@ -29,7 +29,7 @@ def garimella_graph():
         else:
             print(name)
             name = name.split('.')[0]
-            community_detection(name, 0)
+            community_detection(name, 0, False)
 
     os.chdir(starting_path)
     log_write_start_end(False)
@@ -40,7 +40,13 @@ def covid_graph():
     path = os.path.join(starting_path, 'data/corona_virus/Graph')
     os.chdir(path)             
     log_write_start_end(True, 'COVID-19 GRAPH')
-    community_detection('Covid', 1)
+
+    info_no_sent_metis, info_no_sent_fluid = community_detection('Covid', 1, False)
+    info_sent_metis, info_sent_fluid = community_detection('Covid', 1, True)
+
+    note_difference(info_no_sent_metis, info_sent_metis, 'Metis')
+    note_difference(info_no_sent_fluid, info_sent_fluid, 'Fluid')
+
     os.chdir(starting_path)
     log_write_start_end(False, 'Covid')
 
@@ -50,7 +56,11 @@ def vax_graph():
     path = os.path.join(starting_path, 'data/vax_no_vax/Graph')
     os.chdir(path)             
     log_write_start_end(True, 'VACCINATION GRAPH')
-    community_detection('Vax', 1)
+    info_no_sent_metis, info_no_sent_fluid = community_detection('Vax', 1, False)
+    info_sent_metis, info_sent_fluid = community_detection('Vax', 1, True)
+
+    note_difference(info_no_sent_metis, info_sent_metis, 'Metis')
+    note_difference(info_no_sent_fluid, info_sent_fluid, 'Fluid')
     os.chdir(starting_path)
     log_write_start_end(False, 'Vax')
     
