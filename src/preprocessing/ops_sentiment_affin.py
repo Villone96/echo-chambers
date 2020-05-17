@@ -128,13 +128,13 @@ def covid():
     os.chdir(os.path.join(path))
 
     CompGraph = nx.read_gml('Final_Graph_Covid.gml')
-    if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
-        print(nx.info(CompGraph))
-        print()
-        DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
-        print(nx.info(DiGraph))
-        print()
-        add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
+   # if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
+    print(nx.info(CompGraph))
+    print()
+    DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
+    print(nx.info(DiGraph))
+    print()
+    add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
 
     os.chdir(starting_path)
 
