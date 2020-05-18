@@ -139,8 +139,7 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
     for edge in CompGraph.edges(data=True):
         sentiment_diff = 30 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
         if CompGraph[edge[0]][edge[1]]['weightWithSentiment'] + sentiment_diff >= 1:
-            # CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = CompGraph[edge[0]][edge[1]]['weightWithSentiment'] + sentiment_diff
-            CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = sentiment_diff
+            CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = CompGraph[edge[0]][edge[1]]['weightWithSentiment'] + sentiment_diff
         else:
             CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = 1
 
