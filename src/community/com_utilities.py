@@ -5,7 +5,7 @@ import networkx.algorithms.community as nx_comm
 import nxmetis
 import time
 from math import ceil
-from random import random
+from random import random, randint
 from collections import Counter
 
 from community.log_writer import log_write_com_result, log_write_graph_info, print_difference
@@ -15,10 +15,7 @@ def create_multi_graph(G):
     G_multi = nx.MultiGraph()
     for edge in G.edges(data = True):
         weight = ceil(edge[2]['weightWithSentiment'])
-        if weight > 1:
-            for _ in range(weight):
-                G_multi.add_edge(edge[0], edge[1])
-        else:
+        for _ in range(weight):
             G_multi.add_edge(edge[0], edge[1])
 
     return G_multi
@@ -97,8 +94,6 @@ def get_communities(G, alg, sent, k = 0, seed = 0):
 
         info = [len(raw_partition[1][0]), len(raw_partition[1][1])]
     elif alg == 'Fluid':
-        # ('AFTER')
-        # print(nx.info(G))
         communities: Dict[int, set] = dict()
         start = time.time()
         partitions = nx_comm.asyn_fluidc(G, k=k, seed=seed)
@@ -161,13 +156,12 @@ def community_detection(name, opt, sent=False):
         if name == 'Covid':
             seed = 76
         else:
-            seed = 40
+            seed = 38
     else:
         multi_fluid = multi
     # print('BEFORE')
     # print(nx.info(multi_fluid))
     # print()
-
     list_com_fluid, set_com_fluid, info, exe_time = get_communities(multi_fluid, 'Fluid', sent, 2, seed)
 
     # print()

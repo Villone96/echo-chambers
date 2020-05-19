@@ -74,11 +74,20 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
             tweet[i] = re.sub(r'http:\\*/\\*/.*?\s', '', tweet[i])
             tweet[i] = re.sub(r'https:\\*/\\*/.*?\s', '', tweet[i])
             tweet[i] = re.sub(r"twitter.(\w+)", ' ', tweet[i], flags=re.MULTILINE)
+            tweet[i] = re.sub(r'://(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
             tweet[i] = re.sub(r"://", ' ', tweet[i], flags=re.MULTILINE)
             tweet[i] = re.sub(r"/(\w+)", ' ', tweet[i], flags=re.MULTILINE)
             tweet[i] = re.sub(r"#", '', tweet[i])
-        tweet_series = pd.Series(tweet)
-        tweets_tokenized = tweet_series.apply(tokening.tokenize)
+            tweet[i] = re.sub(r'陈秋实(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+            tweet[i] = re.sub(r'full(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+            tweet[i] = re.sub(r'utm_source(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+            tweet[i] = re.sub(r'utm_medium=(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+            tweet[i] = re.sub(r'=social(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+            tweet[i] = re.sub(r'=web&(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+            tweet[i] = re.sub(r'utm_campaign(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+            tweet[i] = re.sub(r'.html', '', tweet[i])
+        tweets_series = pd.Series(tweet)
+        tweets_tokenized = tweets_series.apply(tokening.tokenize)
         for sentence in range(len(tweets_tokenized)):
             not_number = [token for token in tweets_tokenized[sentence] if not token.isdigit()]
             tweets_tokenized[sentence] = not_number
@@ -154,13 +163,13 @@ def covid():
     os.chdir(os.path.join(path))
 
     CompGraph = nx.read_gml('Final_Graph_Covid.gml')
-    # if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
-    print(nx.info(CompGraph))
-    print()
-    DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
-    print(nx.info(DiGraph))
-    print()
-    add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
+    if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
+        print(nx.info(CompGraph))
+        print()
+        DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
+        print(nx.info(DiGraph))
+        print()
+        add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
 
     os.chdir(starting_path)
 
@@ -171,12 +180,12 @@ def vax():
     os.chdir(os.path.join(path))
 
     CompGraph = nx.read_gml('Final_Graph_Vax.gml')
-    # if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
-    print(nx.info(CompGraph))
-    print()
-    DiGraph = nx.read_gml('Final_DiGraph_Vax.gml')
-    print(nx.info(DiGraph))
-    print()
-    add_sent_weight(DiGraph, CompGraph, stop_words, 'Vax')
+    if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
+        print(nx.info(CompGraph))
+        print()
+        DiGraph = nx.read_gml('Final_DiGraph_Vax.gml')
+        print(nx.info(DiGraph))
+        print()
+        add_sent_weight(DiGraph, CompGraph, stop_words, 'Vax')
 
     os.chdir(starting_path)
