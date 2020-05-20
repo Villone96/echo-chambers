@@ -63,10 +63,13 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
             total_pers_tweet += list(edge)[2]['weight']
         tweet = [item for sublist in tweet for item in sublist]
         total_tweet += total_pers_tweet
-            
+
         if len(tweet) != total_pers_tweet:
             print(f'{node} presents {len(tweet)} but they are {total_pers_tweet}')
             break
+    
+        tweet = set(tweet)
+        tweet = list(tweet)
             
         for i in range(len(tweet)):
             tweet[i] = re.sub(r'\b(http:|www\.)(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
@@ -163,13 +166,13 @@ def covid():
     os.chdir(os.path.join(path))
 
     CompGraph = nx.read_gml('Final_Graph_Covid.gml')
-    if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
-        print(nx.info(CompGraph))
-        print()
-        DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
-        print(nx.info(DiGraph))
-        print()
-        add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
+    # if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
+    print(nx.info(CompGraph))
+    print()
+    DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
+    print(nx.info(DiGraph))
+    print()
+    add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
 
     os.chdir(starting_path)
 
@@ -180,12 +183,12 @@ def vax():
     os.chdir(os.path.join(path))
 
     CompGraph = nx.read_gml('Final_Graph_Vax.gml')
-    if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
-        print(nx.info(CompGraph))
-        print()
-        DiGraph = nx.read_gml('Final_DiGraph_Vax.gml')
-        print(nx.info(DiGraph))
-        print()
-        add_sent_weight(DiGraph, CompGraph, stop_words, 'Vax')
+    # if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
+    print(nx.info(CompGraph))
+    print()
+    DiGraph = nx.read_gml('Final_DiGraph_Vax.gml')
+    print(nx.info(DiGraph))
+    print()
+    add_sent_weight(DiGraph, CompGraph, stop_words, 'Vax')
 
     os.chdir(starting_path)
