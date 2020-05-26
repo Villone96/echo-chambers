@@ -15,7 +15,7 @@ import pandas as pd
 from tqdm import tqdm
 
 def add_topic():
-    # covid()
+    covid()
     vax()
 
 def stemming_opt(token):
