@@ -1,5 +1,6 @@
 import pandas as pd
 import networkx as nx
+import re 
 
 def get_only_date(date):
     date = str(date).split()[0]
@@ -173,3 +174,43 @@ def create_multi_graph(G):
             G_multi.add_edge(edge[0], edge[1])
     
     return G_multi
+
+def delete_url(tweet):
+    for i in range(len(tweet)):
+        tweet[i] = re.sub(r'\b(http:|www\.)(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r"http\S+", '', tweet[i])
+        tweet[i] = re.sub(r'http:\\*/\\*/.*?\s', '', tweet[i])
+        tweet[i] = re.sub(r'https:\\*/\\*/.*?\s', '', tweet[i])
+        tweet[i] = re.sub(r"twitter.(\w+)", ' ', tweet[i], flags=re.MULTILINE)
+        tweet[i] = re.sub(r'://(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r"://", ' ', tweet[i], flags=re.MULTILINE)
+        tweet[i] = re.sub(r"/(\w+)", ' ', tweet[i], flags=re.MULTILINE)
+        tweet[i] = re.sub(r"#", '', tweet[i])
+        tweet[i] = re.sub(r'陈秋实(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r'full(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r'utm_source(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r'utm_medium=(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r'=social(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r'=web&(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r'utm_campaign(?:[^\s,.!?]|[,.!?](?!\s))+', '', tweet[i])
+        tweet[i] = re.sub(r'.html', '', tweet[i])
+    return tweet
+
+def plot_line(x_values, y_values, title, x_text, y_text, legend):
+    
+    x_values = pd.Series(data=x_values)
+    y_values = pd.Series(data=y_values)
+    
+    fig, ax = plt.subplots(figsize=(15, 10))
+    fig.set_size_inches(22,8)
+    ax.set_xticks(x_values)
+    ax.plot(x_values, y_values, color='black', marker='o', label = legend)
+    ax.legend()
+    ax.set_title(title)
+    ax.set_xlabel(x_text)
+    ax.set_ylabel(y_text)
+    save_img(title)
+    plt.show()
+    
+def save_img(title):    
+    plt.savefig('./analysis_image/'+title+'.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)

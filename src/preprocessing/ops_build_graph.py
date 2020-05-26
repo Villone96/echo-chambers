@@ -4,6 +4,7 @@ from preprocessing.utilities import (get_only_date, get_metadata,
                                     create_multi_graph)
 #from preprocessing.ops_sentiment_affin import add_sentiment
 from preprocessing.ops_sentiment_vader import add_sentiment
+from preprocessing.topic_modelling import add_topic
 import networkx as nx 
 import pandas as pd
 from tqdm import tqdm
@@ -16,6 +17,7 @@ def graph_ops():
     covid_graph()
     vax_graph()
     add_sentiment()
+    add_topic()
 
 ### GARIMELLA 19 GRAPHS
 def garimella_graph():

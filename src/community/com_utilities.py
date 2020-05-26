@@ -150,7 +150,7 @@ def community_detection(name, opt, sent=False):
     #### FLUID
     seed = 1
     if opt == 1:
-        seed = 18
+        seed = 76
     if sent:
         multi_fluid = create_multi_graph(graph)
         if name == 'Covid':
