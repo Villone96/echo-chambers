@@ -1,6 +1,11 @@
 import pandas as pd
 import networkx as nx
 import re 
+from nltk.tokenize import TweetTokenizer
+import pickle
+import numpy as np
+import gensim
+from nltk.stem import PorterStemmer 
 
 def get_only_date(date):
     date = str(date).split()[0]
@@ -214,3 +219,34 @@ def plot_line(x_values, y_values, title, x_text, y_text, legend):
     
 def save_img(title):    
     plt.savefig('./analysis_image/'+title+'.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)
+
+def stemming_opt(token):
+    ps = PorterStemmer() 
+    token = ps.stem(token)
+    return token
+
+def preprocess(text):
+    result = []
+    for token in gensim.utils.simple_preprocess(text):
+        if token not in gensim.parsing.preprocessing.STOPWORDS and len(token) > 3:
+            result.append(stemming_opt(token))
+    return result
+
+def clean_data(tweets):
+    with open("/Users/villons/Desktop/echo-chamers/src/preprocessing/stopwords.txt", "rb") as fp:
+        stop_words = pickle.load(fp)  
+    tweets = delete_url(list(set(tweets)))
+    tokening = TweetTokenizer(strip_handles=True, reduce_len=True)
+    tweet_series = pd.Series(tweets)
+    tweets_tokenized = tweet_series.apply(tokening.tokenize)
+    tweets_tokenized_stop = tweets_tokenized.apply(lambda x: [item for item in x if item not in stop_words])
+    list_done = list(tweets_tokenized_stop)
+    clean_tweet = list()
+    for tweet in list_done:
+        sentence = ''
+        for word in tweet:
+            sentence += f'{word} '
+        clean_tweet.append(sentence)
+    df = pd.DataFrame(np.array(clean_tweet).reshape(len(clean_tweet),1), columns = ['Tweet'])
+    processed_docs = df['Tweet'].map(preprocess)
+    return processed_docs

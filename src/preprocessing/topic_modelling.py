@@ -10,11 +10,14 @@ from nltk.tokenize import TweetTokenizer
 import os
 import networkx as nx
 from preprocessing.utilities import delete_url, plot_line
+from preprocessing.ops_topic_lda import assign_topic_weight
 from nltk.stem import PorterStemmer 
 import pandas as pd
 from tqdm import tqdm
 
+
 def add_topic():
+    pass
     covid()
     vax()
 
@@ -42,12 +45,12 @@ def creat_LDA_model(name):
         if isinstance(edge[2]['tweets'], (str)):
             edge[2]['tweets'] = [edge[2]['tweets']]
         all_tweet.append(edge[2]['tweets'])
-        all_tweet = [item for sublist in all_tweet for item in sublist]
-        raw_tweets = set()
-        for tweet in tqdm(all_tweet):
-            raw_tweets.add(tweet)
-        raw_tweets = list(raw_tweets)
-        raw_tweets = delete_url(raw_tweets)
+    all_tweet = [item for sublist in all_tweet for item in sublist]
+    raw_tweets = set()
+    for tweet in tqdm(all_tweet):
+        raw_tweets.add(tweet)
+    raw_tweets = list(raw_tweets)
+    raw_tweets = delete_url(raw_tweets)
 
     with open("/Users/villons/Desktop/echo-chamers/src/preprocessing/stopwords.txt", "rb") as fp:
         stop_words = pickle.load(fp)
@@ -133,8 +136,18 @@ def covid():
         creat_LDA_model('Covid')
     
     lda_model = gensim.models.wrappers.LdaMallet.load("./LDA_model/lda_top_coherence.model")
-    for idx, topic in lda_model.print_topics(-1, 15):
-        print('Topic: {} \nWords: {}'.format(idx, topic))
+    #for idx, topic in lda_model.print_topics(-1, 15):
+    #    print('Topic: {} \nWords: {}'.format(idx, topic))
+    
+    
+    CompGraph = nx.read_gml(f'./Graph/Final_Graph_Covid.gml')
+    if not 'weightWithTopic' in list(CompGraph.edges(data=True))[0][2]:
+        print(nx.info(CompGraph))
+        print()
+        DiGraph = nx.read_gml('./Graph/Final_DiGraph_Covid.gml')
+        print(nx.info(DiGraph))
+        print()
+        assign_topic_weight(DiGraph, CompGraph, 'Covid', lda_model)
 
     os.chdir(starting_path)
 
@@ -153,8 +166,8 @@ def vax():
         creat_LDA_model('Vax')
         
     lda_model = gensim.models.wrappers.LdaMallet.load("./LDA_model/lda_top_coherence.model")
-    for idx, topic in lda_model.print_topics(-1, 15):
-        print('Topic: {} \nWords: {}'.format(idx, topic))
+    #for idx, topic in lda_model.print_topics(-1, 15):
+    #    print('Topic: {} \nWords: {}'.format(idx, topic))
 
 
     os.chdir(starting_path)
