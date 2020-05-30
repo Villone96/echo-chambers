@@ -17,7 +17,6 @@ from tqdm import tqdm
 
 
 def add_topic():
-    pass
     covid()
     vax()
 
@@ -168,6 +167,14 @@ def vax():
     lda_model = gensim.models.wrappers.LdaMallet.load("./LDA_model/lda_top_coherence.model")
     #for idx, topic in lda_model.print_topics(-1, 15):
     #    print('Topic: {} \nWords: {}'.format(idx, topic))
+    CompGraph = nx.read_gml(f'./Graph/Final_Graph_Vax.gml')
+    if not 'weightWithTopic' in list(CompGraph.edges(data=True))[0][2]:
+        print(nx.info(CompGraph))
+        print()
+        DiGraph = nx.read_gml('./Graph/Final_DiGraph_Vax.gml')
+        print(nx.info(DiGraph))
+        print()
+        assign_topic_weight(DiGraph, CompGraph, 'Vax', lda_model)
 
 
     os.chdir(starting_path)

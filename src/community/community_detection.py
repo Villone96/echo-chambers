@@ -29,7 +29,7 @@ def garimella_graph():
         else:
             print(name)
             name = name.split('.')[0]
-            community_detection(name, 0, False)
+            community_detection(name, 0, 'weight')
 
     os.chdir(starting_path)
     log_write_start_end(False)
@@ -41,11 +41,16 @@ def covid_graph():
     os.chdir(path)             
     log_write_start_end(True, 'COVID-19 GRAPH')
 
-    info_no_sent_metis, info_no_sent_fluid = community_detection('Covid', 1, False)
-    info_sent_metis, info_sent_fluid = community_detection('Covid', 1, True)
+    info_no_sent_metis, info_no_sent_fluid = community_detection('Covid', 1, 'weight')
+    info_sent_metis, info_sent_fluid = community_detection('Covid', 1, 'sentiment')
+    info_topic_metis, info_topic_fluid = community_detection('Covid', 1, 'topic')
+    info_hybrid_metis, info_hybrid_fluid = community_detection('Covid', 1, 'hybrid')
 
-    note_difference(info_no_sent_metis, info_sent_metis, 'Metis')
-    note_difference(info_no_sent_fluid, info_sent_fluid, 'Fluid')
+    note_difference(info_no_sent_metis, info_sent_metis, 'Metis', 'sentiment')
+    note_difference(info_no_sent_metis, info_topic_metis, 'Metis', 'topic')
+    note_difference(info_no_sent_metis, info_hybrid_metis, 'Metis', 'hybrid')
+
+    # note_difference(info_no_sent_fluid, info_sent_fluid, 'Fluid')
 
     os.chdir(starting_path)
     log_write_start_end(False, 'Covid')
@@ -56,11 +61,17 @@ def vax_graph():
     path = os.path.join(starting_path, 'data/vax_no_vax/Graph')
     os.chdir(path)             
     log_write_start_end(True, 'VACCINATION GRAPH')
-    info_no_sent_metis, info_no_sent_fluid = community_detection('Vax', 1, False)
-    info_sent_metis, info_sent_fluid = community_detection('Vax', 1, True)
+    info_no_sent_metis, info_no_sent_fluid = community_detection('Vax', 1, 'weight')
+    info_sent_metis, info_sent_fluid = community_detection('Vax', 1, 'sentiment')
+    info_topic_metis, info_topic_fluid = community_detection('Vax', 1, 'topic')
+    info_hybrid_metis, info_hybrid_fluid = community_detection('Vax', 1, 'hybrid')
 
-    note_difference(info_no_sent_metis, info_sent_metis, 'Metis')
-    note_difference(info_no_sent_fluid, info_sent_fluid, 'Fluid')
+    note_difference(info_no_sent_metis, info_sent_metis, 'Metis', 'sentiment')
+    note_difference(info_no_sent_metis, info_topic_metis, 'Metis', 'topic')
+    note_difference(info_no_sent_metis, info_hybrid_metis, 'Metis', 'hybrid')
+
+    
+    # note_difference(info_no_sent_fluid, info_sent_fluid, 'Fluid')
     os.chdir(starting_path)
     log_write_start_end(False, 'Vax')
     
