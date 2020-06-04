@@ -124,7 +124,7 @@ def get_communities(G, alg, typology, k = 0, seed = 0):
 def label_node_communities(compactGraph, communities, type_com, name, opt):
 
     if opt == 1:
-        directGraph = nx.read_gml(f'Final_Graph_{name}.gml')
+        directGraph = nx.read_gml(f'Final_DiGraph_{name}.gml')
 
     for member in communities:
         compactGraph.nodes[member][f'{type_com}Comm'] = communities[member]
