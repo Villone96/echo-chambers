@@ -17,6 +17,7 @@ def start_community_detection():
     vax_graph()
 
 def garimella_graph():
+    logging.basicConfig(filename='community_log.log', level=logging.INFO, format='%(message)s')
     starting_path = os.getcwd()
     path = os.path.join(starting_path, 'data/garimella_data/Graph')
     os.chdir(path)
@@ -28,6 +29,7 @@ def garimella_graph():
             pass
         else:
             print(name)
+            logging.info(f'GRAPH NAME: {name}')
             name = name.split('.')[0]
             community_detection(name, 0, 'weight')
 
