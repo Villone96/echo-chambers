@@ -61,7 +61,7 @@ def covid_graph():
     start_GMCK(graph, 'weightComm')
     print()
 
-    start_EC(graph, 'weightComm')
+    start_EC(graph, 'weightComm', 250)
     print()
     os.chdir(starting_path)
     log_write_start_end(False)
