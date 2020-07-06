@@ -12,9 +12,9 @@ def start_community_detection():
     logging.basicConfig(filename='community_log.log', level=logging.INFO, format='%(message)s')
     today = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     logging.info(f'RUN TIME: {today}')
-    garimella_graph()
+    #garimella_graph()
     covid_graph()
-    vax_graph()
+    #vax_graph()
 
 def garimella_graph():
     logging.basicConfig(filename='community_log.log', level=logging.INFO, format='%(message)s')

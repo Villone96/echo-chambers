@@ -42,6 +42,8 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
     max_n_edge = 0
     min_n_edge = 0
 
+    total_possible_edges = list()
+
     for node in tqdm(DiGraph.nodes(), desc='node processed'):
         tweet = list()
         total_pers_tweet = 0
@@ -49,6 +51,7 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
         for edge in info:
             if edge[0] != edge[1]:
                 weight = edge[2]['weight']
+                total_possible_edges.append(weight)
                 if max_n_edge == 0:
                     max_n_edge = weight
                     min_n_edge = weight
@@ -110,11 +113,15 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
                 min_val = vader_score
             elif min_val > vader_score:
                 min_val = vader_score
-    
-    new_max = 30
-    new_min = -30
+    new_max_edge = int((((max_n_edge*np.median(total_possible_edges))/np.mean(total_possible_edges))/2) - np.mean(total_possible_edges))
+    new_min_edge = 1
+    print(f'VALGO: {new_max_edge}')
+
+    new_max = int(new_max_edge*0.1)
+    new_min = -new_max
     old_range = max_val - min_val
     new_range = new_max - new_min
+
 
     for node in DiGraph.nodes():
         old_value = DiGraph.nodes[node]['sentiment']
@@ -123,8 +130,11 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
             DiGraph.nodes[node]['sentiment'] = new_value
             CompGraph.nodes[node]['sentiment'] = new_value
 
-    new_max_edge = 300
-    new_min_edge = 1
+
+    #print(max_n_edge)
+    #print(min_n_edge)
+    #print(np.mean(total_possible_edges))
+    #print(np.median(total_possible_edges))
     old_range = max_n_edge - min_n_edge
     new_range = new_max_edge - new_min_edge
 
@@ -134,7 +144,7 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
         CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = new_value
 
     for edge in CompGraph.edges(data=True):
-        sentiment_diff = 60 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
+        sentiment_diff = new_max*2 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
         if CompGraph[edge[0]][edge[1]]['weightWithSentiment'] + sentiment_diff >= 1:
             CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = CompGraph[edge[0]][edge[1]]['weightWithSentiment'] + sentiment_diff
         else:
@@ -151,13 +161,13 @@ def covid():
     os.chdir(os.path.join(path))
 
     CompGraph = nx.read_gml('Final_Graph_Covid.gml')
-    if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
-        print(nx.info(CompGraph))
-        print()
-        DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
-        print(nx.info(DiGraph))
-        print()
-        add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
+    # if not 'weightWithSentiment' in list(CompGraph.edges(data=True))[0][2]:
+    print(nx.info(CompGraph))
+    print()
+    DiGraph = nx.read_gml('Final_DiGraph_Covid.gml')
+    print(nx.info(DiGraph))
+    print()
+    add_sent_weight(DiGraph, CompGraph, stop_words, 'Covid')
 
     os.chdir(starting_path)
 

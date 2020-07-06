@@ -21,9 +21,9 @@ def controversy_detection():
     start_detection()
 
 if __name__ == '__main__':
-    #preprocessing_operation()
-    #community_detection()
-    controversy_detection()
+    preprocessing_operation()
+    community_detection()
+    #controversy_detection()
 
 
 
