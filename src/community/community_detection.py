@@ -45,12 +45,12 @@ def covid_graph():
 
     info_no_sent_metis, info_no_sent_fluid = community_detection('Covid', 1, 'weight')
     info_sent_metis, info_sent_fluid = community_detection('Covid', 1, 'sentiment')
-    info_topic_metis, info_topic_fluid = community_detection('Covid', 1, 'topic')
-    info_hybrid_metis, info_hybrid_fluid = community_detection('Covid', 1, 'hybrid')
+    #info_topic_metis, info_topic_fluid = community_detection('Covid', 1, 'topic')
+    #info_hybrid_metis, info_hybrid_fluid = community_detection('Covid', 1, 'hybrid')
 
     note_difference(info_no_sent_metis, info_sent_metis, 'Metis', 'sentiment')
-    note_difference(info_no_sent_metis, info_topic_metis, 'Metis', 'topic')
-    note_difference(info_no_sent_metis, info_hybrid_metis, 'Metis', 'hybrid')
+    #note_difference(info_no_sent_metis, info_topic_metis, 'Metis', 'topic')
+    #note_difference(info_no_sent_metis, info_hybrid_metis, 'Metis', 'hybrid')
 
     # note_difference(info_no_sent_fluid, info_sent_fluid, 'Fluid')
 
