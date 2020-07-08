@@ -18,7 +18,12 @@ import pickle
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from preprocessing.utilities import delete_url
 
-
+def delete_outliers(dataset, field):
+    dataset_value = dataset[field]
+    removed_outliers = dataset_value.between(dataset_value.quantile(.25), dataset_value.quantile(0.75))
+    index_names = dataset[~removed_outliers].index
+    dataset = dataset.drop(index_names)
+    return dataset
 
 def add_sentiment():
     nltk.download('punkt')
@@ -41,6 +46,7 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
     tokening = TweetTokenizer(strip_handles=True, reduce_len=True)
     max_n_edge = 0
     min_n_edge = 0
+    nums_of_edges = list()
 
     total_possible_edges = list()
 
@@ -113,12 +119,13 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
                 min_val = vader_score
             elif min_val > vader_score:
                 min_val = vader_score
-    new_max_edge = int((((max_n_edge*np.median(total_possible_edges))/np.mean(total_possible_edges))/2) - np.mean(total_possible_edges))
+    # new_max_edge = int((((max_n_edge*np.median(total_possible_edges))/np.mean(total_possible_edges))/2) - np.mean(total_possible_edges))
+    new_max_edge = int(max_n_edge/4)
     new_min_edge = 1
     print(f'VALGO: {new_max_edge}')
 
-    new_max = int(new_max_edge*0.1)
-    new_min = -new_max
+    new_max = 30#int(max_n_edge*0.1) #30 # int(new_max_edge*0.1)
+    new_min = -30#-new_max#-30 #-new_max
     old_range = max_val - min_val
     new_range = new_max - new_min
 
@@ -141,10 +148,14 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
     for edge in CompGraph.edges(data=True):
         old_value = edge[2]['weight']
         new_value = (((old_value - min_n_edge)*new_range)/old_range)+new_min_edge
-        CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = new_value
+        # CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = new_value
+        CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = 1
 
     for edge in CompGraph.edges(data=True):
-        sentiment_diff = new_max*2 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
+        # sentiment_diff = new_max*2 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
+        sentiment_diff = 60 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
+        # sentiment_diff = new_max*2 - abs(CompGraph.nodes[edge[0]]['sentiment'] - CompGraph.nodes[edge[1]]['sentiment'])
+        new_max
         if CompGraph[edge[0]][edge[1]]['weightWithSentiment'] + sentiment_diff >= 1:
             CompGraph[edge[0]][edge[1]]['weightWithSentiment'] = CompGraph[edge[0]][edge[1]]['weightWithSentiment'] + sentiment_diff
         else:

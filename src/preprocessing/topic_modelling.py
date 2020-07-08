@@ -14,6 +14,9 @@ from preprocessing.ops_topic_lda import assign_topic_weight
 from nltk.stem import PorterStemmer 
 import pandas as pd
 from tqdm import tqdm
+import pickle
+from gensim.models import CoherenceModel
+import matplotlib.pyplot as plt
 
 
 def add_topic():
@@ -51,7 +54,7 @@ def creat_LDA_model(name):
     raw_tweets = list(raw_tweets)
     raw_tweets = delete_url(raw_tweets)
 
-    with open("/Users/villons/Desktop/echo-chamers/src/preprocessing/stopwords.txt", "rb") as fp:
+    with open("./preprocessing/stopwords.txt", "rb") as fp:
         stop_words = pickle.load(fp)
 
     tweet_series = pd.Series(raw_tweets)
@@ -84,7 +87,7 @@ def creat_LDA_model(name):
         list_words = []
 
     coherence = list()
-    mallet_path = '/Users/villons/Desktop/echo-chamers/src/data/mallet_lda/bin/mallet'
+    mallet_path = './data/mallet_lda/bin/mallet'
 
     for i in tqdm(range(2, 31)):
         lda_model = gensim.models.wrappers.LdaMallet(mallet_path, bow_corpus, num_topics=i, id2word=dictionary, workers=4)
@@ -94,9 +97,8 @@ def creat_LDA_model(name):
         coherence.append(coherence_lda)
         
         print(f'With {i} topic, it has been recorded {coherence_lda} of coherence')
-        
-        if len(coherence) == 1 or coherence_lda > max(coherence):
-            lda_model.save('./LDA_model/lda_top_coherence.model')
+
+        lda_model.save(f'./LDA_model/lda_model_{i}.model')
     
     with open("./LDA_model/coherence.txt", "wb") as fp:
         pickle.dump(coherence, fp)
