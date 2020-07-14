@@ -41,13 +41,13 @@ def add_sent_weight(DiGraph, CompGraph, stop_words, name):
     total_tweet = 0
     max_val = 0
     min_val = 0
-    score = 0
-    no_node = 0
+    #score = 0
+    #no_node = 0
     analyser = SentimentIntensityAnalyzer()
     tokening = TweetTokenizer(strip_handles=True, reduce_len=True)
     max_n_edge = 0
     min_n_edge = 0
-    nums_of_edges = list()
+    #nums_of_edges = list()
 
     total_possible_edges = list()
 
