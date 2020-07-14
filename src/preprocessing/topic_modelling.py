@@ -20,8 +20,9 @@ import matplotlib.pyplot as plt
 
 
 def add_topic():
-    covid()
-    vax()
+    pass
+    #covid()
+    #vax()
 
 def stemming_opt(token):
     ps = PorterStemmer() 

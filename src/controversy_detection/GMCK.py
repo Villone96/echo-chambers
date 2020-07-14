@@ -1,6 +1,7 @@
 
 from tqdm import tqdm
 import logging
+from controversy_detection.controversy_utilities import create_multi_graph
 
 def satisfy_second_condition(node1, graph, dict_left, dict_right, cut):
     # A node v in G_i has at least one edge connecting to a member of G_i which is not connected to G_j.
@@ -26,6 +27,8 @@ def start_GMCK(graph, com_type):
     logging.basicConfig(filename='controversy_detection.log', level=logging.INFO, format='%(message)s')
     left = list()
     right = list()
+
+    # graph = create_multi_graph(start_graph, 1)
 
     for node in graph.nodes(data=True):
         if node[1][com_type] == 0:

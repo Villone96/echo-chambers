@@ -2,6 +2,7 @@ import os
 
 import random
 from controversy_detection.random_walks import random_walks, random_walks_centrality
+from controversy_detection.change_side_controversy import change_side_controversy
 from controversy_detection.GMCK import start_GMCK
 from controversy_detection.EC import start_EC
 import logging
@@ -44,6 +45,9 @@ def garimella_graph():
             random_walks_centrality(graph)
             print()
 
+            change_side_controversy(graph, 0.6, shortest_path*2)
+            print()
+
             start_GMCK(graph, 'weightComm')
             print()
 
@@ -59,19 +63,24 @@ def covid_graph():
     os.chdir(path)
     log_write_start_end(True, 'CORONA VIRUS')
     graph = nx.read_gml('Final_Graph_Covid.gml')
+    print(nx.info(graph))
 
-    shortest_path = average_shortest_path_length(graph)
+    #shortest_path = average_shortest_path_length(graph, weight='weight')
+    shortest_path = 25.596369322723653
     logging.info(f'Average shortest path: {shortest_path}')
 
-    random_walks(graph, 0.6, shortest_path*2)
-    random_walks_centrality(graph)
+    #random_walks(graph, 0.6, int(shortest_path*2))
+    #random_walks_centrality(graph)
+    #print()
+
+    change_side_controversy(graph, 0.6, shortest_path*2)
     print()
 
-    start_GMCK(graph, 'weightComm')
-    print()
+    #start_GMCK(graph, 'sentimentComm')
+    #print()
 
-    start_EC(graph, 'weightComm', 250)
-    print()
+    #start_EC(graph, 'sentimentComm')
+    #print()
     os.chdir(starting_path)
     log_write_start_end(False)
 
@@ -90,10 +99,10 @@ def vax_graph():
     random_walks_centrality(graph)
     print()
 
-    start_GMCK(graph, 'weightComm')
+    start_GMCK(graph, 'sentimentComm')
     print()
 
-    start_EC(graph, 'weightComm')
+    start_EC(graph, 'sentimentComm')
     print()
     os.chdir(starting_path)
     log_write_start_end(False)

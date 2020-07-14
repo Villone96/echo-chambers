@@ -17,7 +17,7 @@ def graph_ops():
     covid_graph()
     vax_graph()
     add_sentiment()
-    add_topic()
+    # add_topic()
 
 ### GARIMELLA 19 GRAPHS
 def garimella_graph():
@@ -70,7 +70,9 @@ def covid_graph():
     os.chdir(starting_path)
 
 def build_covid_graph(path):
-    df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', lineterminator='\n')
+    df = pd.read_csv(path + '/final_data/' + 'Final_data.csv', usecols = ['username', 'favorites', 'retweets',
+                                                                '@mentions', 'geo', 'text_con_hashtag'])
+    print(df.columns)
     df.dropna(axis='index', how='all', subset=['text_con_hashtag'], inplace = True)
 
     G_dg = nx.DiGraph()
@@ -80,12 +82,15 @@ def build_covid_graph(path):
         if row[4] == 'self' and row[4] != '':
             G_dg = add_edge(G_dg, row[5], 'covid', row[0], row[2], 0, row[3], row[3])
         else:
-            mentions = row[4].split(',')
-            for mention in mentions:
-                mention = mention.strip()
-                if mention != '' and mention != '@' :
-                    G_dg = add_edge(G_dg, row[5], 'covid', row[0], row[2], 0, row[3], mention)
-                    G_g = add_edge(G_g, None, None, None, None, None, row[3], mention)
+            try:
+                mentions = row[4].split(',')
+                for mention in mentions:
+                    mention = mention.strip()
+                    if mention != '' and mention != '@' :
+                        G_dg = add_edge(G_dg, row[5], 'covid', row[0], row[2], 0, row[3], mention)
+                        G_g = add_edge(G_g, None, None, None, None, None, row[3], mention)
+            except:
+                print(row[4])
 
     G_dg.name = 'Starter covid Direct Graph'
     G_g.name = 'Starter covid Graph'

@@ -17,6 +17,7 @@ import re
 import pickle
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from preprocessing.utilities import delete_url
+import math
 
 def delete_outliers(dataset, field):
     dataset_value = dataset[field]
