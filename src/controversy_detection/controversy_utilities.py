@@ -19,8 +19,10 @@ def create_multi_graph(G, id = 0):
                 G_multi.add_edge(edge[0], edge[1])
 
     if id == 0:           
-        G_multi = get_user_comm(G, G_multi, 'sentimentComm')
-    else:
         G_multi = get_user_comm(G, G_multi, 'weightComm')
+    elif id == 1:
+        G_multi = get_user_comm(G, G_multi, 'sentimentComm')
+    elif id == 2:
+        G_multi = get_user_comm(G, G_multi, 'topicComm')
     
     return G_multi

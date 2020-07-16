@@ -3,7 +3,7 @@ from networkx.algorithms.centrality import degree_centrality
 from controversy_detection.controversy_utilities import create_multi_graph
 import logging
 
-def random_walks(start_graph, sample_size, num_steps):
+def random_walks(start_graph, sample_size, num_steps, opt=0):
     logging.basicConfig(filename='community_log.log', level=logging.INFO, format='%(message)s')
     for_community_0 = 0
     for_community_1 = 0
@@ -13,8 +13,13 @@ def random_walks(start_graph, sample_size, num_steps):
     
     start_1_end_1 = 0
     start_1_end_0 = 0
-
-    graph = create_multi_graph(start_graph, 1)
+    if opt == 0:
+        com_type = 'weightComm'
+    elif opt == 1:
+        com_type = 'sentimentComm'
+    elif opt == 2:
+        com_type = 'topicComm'
+    graph = create_multi_graph(start_graph, opt)
 
     for node in graph.nodes(data=True):
         if node[1]['com'] == 0:
@@ -85,8 +90,8 @@ def random_walks(start_graph, sample_size, num_steps):
     #print(f'start_0_end_1: {start_0_end_1}')
     #print(f'start_1_end_1: {start_1_end_1}') 
     score = start_0_end_0*start_1_end_1-start_1_end_0*start_0_end_1
-    print(f'RandomWalk random score: {round(score, 4)}')
-    logging.info(f'RandomWalk random score: {round(score, 4)}')
+    print(f'RandomWalk random score for {com_type}: {round(score, 4)}')
+    logging.info(f'RandomWalk random score for {com_type}: {round(score, 4)}')
 
 def start_random_walks(node, graph, steps):
     max_restart = 20
@@ -155,9 +160,15 @@ def top_out_degree(graph, perc, com):
     return top_user
     
     
-def random_walks_centrality(start_graph):
+def random_walks_centrality(start_graph, opt=0):
     logging.basicConfig(filename='community_log.log', level=logging.INFO, format='%(message)s')
-    graph = create_multi_graph(start_graph, 1)
+    if opt == 0:
+        com_type = 'weightComm'
+    elif opt == 1:
+        com_type = 'sentimentComm'
+    elif opt == 2:
+        com_type = 'topicComm'
+    graph = create_multi_graph(start_graph, opt)
     top_com_0 = top_out_degree(graph, 25, 0)
     top_com_1 = top_out_degree(graph, 25, 1)
     
@@ -216,9 +227,9 @@ def random_walks_centrality(start_graph):
     #print(f'start_0_end_1: {start_0_end_1}')
     #print(f'start_1_end_1: {start_1_end_1}')    
     score = start_0_end_0*start_1_end_1-start_1_end_0*start_0_end_1
-    print(f'RandomWalk top degree score: {round(score, 4)}')
+    print(f'RandomWalk top degree score for {com_type}: {round(score, 4)}')
     print()
-    logging.info(f'RandomWalk top degree score: {round(score, 4)}')
+    logging.info(f'RandomWalk top degree score for {com_type}: {round(score, 4)}')
 
 # result legend
 # 0: start in 0 and end in 0

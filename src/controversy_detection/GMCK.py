@@ -124,5 +124,5 @@ def start_GMCK(graph, com_type):
         polarization_score += (dict_internal[keys] * 1.0 / (dict_internal[keys] + dict_across[keys]) - 0.5)
 
     polarization_score = round(polarization_score / len(cut_nodes.keys()), 4)
-    print(f'GMCK score: {round(polarization_score, 4)}')
-    logging.info(f'GMCK score: {round(polarization_score, 4)}')
+    print(f'GMCK score for {com_type}: {round(polarization_score, 4)}')
+    logging.info(f'GMCK score for {com_type}: {round(polarization_score, 4)}')

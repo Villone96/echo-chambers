@@ -18,7 +18,7 @@ def start_detection():
     logging.info(f'RUN TIME: {today}')
     #garimella_graph()
     covid_graph()
-    vax_graph()
+    #vax_graph()
 
 
 def garimella_graph():
@@ -66,18 +66,28 @@ def covid_graph():
     print(nx.info(graph))
 
     #shortest_path = average_shortest_path_length(graph, weight='weight')
-    shortest_path = 25.596369322723653
-    logging.info(f'Average shortest path: {shortest_path}')
+    #shortest_path = 25.596369322723653
+    shortest_path = 25.904721007206568
+    #logging.info(f'Average shortest path: {shortest_path}')
 
-    #random_walks(graph, 0.6, int(shortest_path*2))
-    #random_walks_centrality(graph)
-    #print()
+    random_walks(graph, 0.6, int(shortest_path*2))
+    random_walks(graph, 0.6, int(shortest_path*2), 1)
+    random_walks(graph, 0.6, int(shortest_path*2), 2)
 
-    change_side_controversy(graph, 0.6, shortest_path*2)
+    random_walks_centrality(graph)
+    random_walks_centrality(graph, 1)
+    random_walks_centrality(graph, 2)
     print()
 
-    #start_GMCK(graph, 'sentimentComm')
-    #print()
+    change_side_controversy(graph, 0.6, shortest_path*2)
+    change_side_controversy(graph, 0.6, shortest_path*2, 1)
+    change_side_controversy(graph, 0.6, shortest_path*2, 2)
+    print()
+
+    start_GMCK(graph, 'weightComm')
+    start_GMCK(graph, 'sentimentComm')
+    start_GMCK(graph, 'topicComm')
+    print()
 
     #start_EC(graph, 'sentimentComm')
     #print()
@@ -95,14 +105,17 @@ def vax_graph():
     shortest_path = average_shortest_path_length(graph)
     logging.info(f'Average shortest path: {shortest_path}')
 
-    random_walks(graph, 0.6, shortest_path*2)
-    random_walks_centrality(graph)
+    random_walks(graph, 0.6, shortest_path*2, 1)
+    random_walks_centrality(graph, 1)
+    print()
+
+    change_side_controversy(graph, 0.6, shortest_path*2, 1)
     print()
 
     start_GMCK(graph, 'sentimentComm')
     print()
 
-    start_EC(graph, 'sentimentComm')
-    print()
+    #start_EC(graph, 'sentimentComm')
+    #print()
     os.chdir(starting_path)
     log_write_start_end(False)

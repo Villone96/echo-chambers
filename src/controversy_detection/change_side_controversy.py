@@ -3,13 +3,19 @@ from controversy_detection.controversy_utilities import create_multi_graph
 import numpy as np
 import logging
 
-def change_side_controversy(start_graph, sample_size, num_steps):
+def change_side_controversy(start_graph, sample_size, num_steps, opt=0):
 
     logging.basicConfig(filename='community_log.log', level=logging.INFO, format='%(message)s')
     
     for_community_0 = 0
     for_community_1 = 0
-    graph = create_multi_graph(start_graph, 1)
+    if opt == 0:
+        com_type = 'weightComm'
+    elif opt == 1:
+        com_type = 'sentimentComm'
+    elif opt == 2:
+        com_type = 'topicComm'
+    graph = create_multi_graph(start_graph, opt)
     result = list()
     
     for node in graph.nodes(data=True):
@@ -54,8 +60,8 @@ def change_side_controversy(start_graph, sample_size, num_steps):
                     print('75% of node processed')
                     
     score = np.mean(result)
-    print(f'Change side controversy {np.mean(score)}')
-    logging.info(f'Change side controversy score: {round(score, 4)}')
+    print(f'Change side controversy for {com_type}: {np.mean(score)}')
+    logging.info(f'Change side controversy score for {com_type}: {round(score, 4)}')
     
 def start_random_walks_side(node, graph, steps):
     max_restart = 20
