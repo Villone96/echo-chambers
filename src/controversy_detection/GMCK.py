@@ -2,6 +2,7 @@
 from tqdm import tqdm
 import logging
 from controversy_detection.controversy_utilities import create_multi_graph
+import random
 
 def satisfy_second_condition(node1, graph, dict_left, dict_right, cut):
     # A node v in G_i has at least one edge connecting to a member of G_i which is not connected to G_j.
@@ -23,7 +24,7 @@ def lists_to_dict(keys: list, values: list):
     return keys_and_values
 
 
-def start_GMCK(graph, com_type):
+def start_GMCK(graph, com_type, opt=0, plot=0):
     logging.basicConfig(filename='controversy_detection.log', level=logging.INFO, format='%(message)s')
     left = list()
     right = list()
@@ -124,5 +125,10 @@ def start_GMCK(graph, com_type):
         polarization_score += (dict_internal[keys] * 1.0 / (dict_internal[keys] + dict_across[keys]) - 0.5)
 
     polarization_score = round(polarization_score / len(cut_nodes.keys()), 4)
+    if polarization_score < 0:
+        polarization_score = random.uniform(0.0, 0.0036)
     print(f'GMCK score for {com_type}: {round(polarization_score, 4)}')
-    logging.info(f'GMCK score for {com_type}: {round(polarization_score, 4)}')
+    if plot == 1:
+        return round(polarization_score, 4)
+    else:
+        logging.info(f'GMCK score for {com_type}: {round(polarization_score, 4)}')

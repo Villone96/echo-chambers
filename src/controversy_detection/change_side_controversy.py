@@ -3,7 +3,7 @@ from controversy_detection.controversy_utilities import create_multi_graph
 import numpy as np
 import logging
 
-def change_side_controversy(start_graph, sample_size, num_steps, opt=0):
+def change_side_controversy(start_graph, sample_size, num_steps, opt=0, plot=0):
 
     logging.basicConfig(filename='community_log.log', level=logging.INFO, format='%(message)s')
     
@@ -61,7 +61,10 @@ def change_side_controversy(start_graph, sample_size, num_steps, opt=0):
                     
     score = np.mean(result)
     print(f'Change side controversy for {com_type}: {np.mean(score)}')
-    logging.info(f'Change side controversy score for {com_type}: {round(score, 4)}')
+    if plot == 1:
+        return np.mean(round(score, 4))
+    else:
+        logging.info(f'Change side controversy score for {com_type}: {round(score, 4)}')
     
 def start_random_walks_side(node, graph, steps):
     max_restart = 20

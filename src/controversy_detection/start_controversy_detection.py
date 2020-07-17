@@ -16,8 +16,8 @@ def start_detection():
     logging.basicConfig(filename='controversy_detection.log', level=logging.INFO, format='%(message)s')
     today = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     logging.info(f'RUN TIME: {today}')
-    #garimella_graph()
-    covid_graph()
+    garimella_graph()
+    #covid_graph()
     #vax_graph()
 
 
@@ -51,8 +51,8 @@ def garimella_graph():
             start_GMCK(graph, 'weightComm')
             print()
 
-            start_EC(graph, 'weightComm')
-            print()
+            #start_EC(graph, 'weightComm')
+            #print()
     os.chdir(starting_path)
     log_write_start_end(False)
 
@@ -66,8 +66,8 @@ def covid_graph():
     print(nx.info(graph))
 
     #shortest_path = average_shortest_path_length(graph, weight='weight')
-    #shortest_path = 25.596369322723653
-    shortest_path = 25.904721007206568
+    shortest_path = 25.596369322723653
+    #shortest_path = 25.904721007206568
     #logging.info(f'Average shortest path: {shortest_path}')
 
     random_walks(graph, 0.6, int(shortest_path*2))

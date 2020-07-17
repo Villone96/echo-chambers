@@ -26,9 +26,9 @@ def link_prediction():
 
 if __name__ == '__main__':
     #preprocessing_operation()
-    community_detection()
+    #community_detection()
     #controversy_detection()
-    #link_prediction()
+    link_prediction()
 
 
 
