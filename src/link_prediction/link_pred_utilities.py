@@ -4,6 +4,10 @@ from controversy_detection.GMCK import start_GMCK
 from controversy_detection.random_walks import random_walks, random_walks_centrality
 from matplotlib import pyplot as plt
 import numpy as np
+import networkx as nx
+from link_prediction.home_made_link_prediction import get_edges_to_add_degree, get_edges_to_add_bet, add_top_deg_to_normal
+from networkx.algorithms.link_prediction import resource_allocation_index, preferential_attachment, jaccard_coefficient, adamic_adar_index
+from link_prediction.state_of_art_alg import get_edges_to_add
 
 def add_sentiment_boost(graph, edge_to_add):
     
@@ -103,6 +107,60 @@ def plot_controversy_measure_line(values, title, no_contr_value):
 
     plt.savefig(f'./{title}.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)
 
+def plot_controversy_sentiment_match(no_sent, sent, title, no_contr_value, methodology):
+    fig, ax = plt.subplots()
+    fig.set_size_inches(18.5, 10.5)
+    marker = ["s", "8"]
+    colors = ['#0425e0', '#e0e004']
+    x_values = list()
+    linestyle = [':', '-.']
+    labels = [f'{methodology} con sentiment', f'{methodology} senza sentiment']
+    
+    for i in range(0, 31):
+        x_values.append(i/100)
+        
+    x_indexes = np.arange(len(x_values))
+    
+    ax.plot(x_indexes, no_sent, color=colors[0], marker=marker[0], linestyle=linestyle[0], label=labels[0])
+    ax.plot(x_indexes, sent, color=colors[1], marker=marker[1], linestyle=linestyle[1], label=labels[1])
+        
+    ax.axhline(no_contr_value, color='#ff0000', label='Score su grafo senza controversy')
+    ax.set_xlabel('% archi aggiunti')
+    ax.set_ylabel('Score controversy')
+    ax.set_title(title)
+    ax.legend()
+    
+    plt.xticks(ticks=x_indexes, labels=x_values)
 
+    plt.grid(True)
+
+    plt.savefig(f'./{title}.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)
+
+
+    
+def launch_all_link_prediction(graph_name, shortest_path, com_type, add_sent_boost):
+    result = list()
+
+    tmp_graph = nx.read_gml(graph_name)
+    selected_edges = get_edges_to_add(tmp_graph, adamic_adar_index, com_type, add_sent_boost)
+    result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
+
+    tmp_graph = nx.read_gml(graph_name)
+    selected_edges = get_edges_to_add(tmp_graph, resource_allocation_index, com_type, add_sent_boost)
+    result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
+
+    tmp_graph = nx.read_gml(graph_name)
+    selected_edges = get_edges_to_add_degree(tmp_graph, com_type, add_sent_boost)
+    result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
+
+    tmp_graph = nx.read_gml(graph_name)
+    selected_edges = get_edges_to_add_bet(tmp_graph, com_type, add_sent_boost)
+    result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
+
+    tmp_graph = nx.read_gml(graph_name)
+    selected_edges = add_top_deg_to_normal(tmp_graph, com_type, add_sent_boost)
+    result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
+
+    return result
     
 
