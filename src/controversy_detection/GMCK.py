@@ -41,7 +41,7 @@ def start_GMCK(graph, com_type, opt=0, plot=0):
     dict_right = lists_to_dict(right, [1] * len(right))
     cut_nodes1 = {}
     cut_nodes = {}
-    for i in tqdm(range(len(left))):
+    for i in range(len(left)):
         name1 = left[i]
         for j in range(len(right)):
             name2 = right[j]
@@ -127,7 +127,7 @@ def start_GMCK(graph, com_type, opt=0, plot=0):
     polarization_score = round(polarization_score / len(cut_nodes.keys()), 4)
     if polarization_score < 0:
         polarization_score = random.uniform(0.0, 0.0036)
-    print(f'GMCK score for {com_type}: {round(polarization_score, 4)}')
+    # print(f'GMCK score for {com_type}: {round(polarization_score, 4)}')
     if plot == 1:
         return round(polarization_score, 4)
     else:

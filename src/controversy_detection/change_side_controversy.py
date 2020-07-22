@@ -53,14 +53,17 @@ def change_side_controversy(start_graph, sample_size, num_steps, opt=0, plot=0):
                 if int(for_community_0 + for_community_1) <= 0:
                     break
                 elif (for_community_0 + for_community_1) == int((sample_com_0 + sample_com_1)*0.75):
-                    print('25% of node processed')
+                    pass
+                    # print('25% of node processed')
                 elif (for_community_0 + for_community_1) == int((sample_com_0 + sample_com_1)*0.5):
-                    print('50% of node processed')
+                    pass
+                    # print('50% of node processed')
                 elif (for_community_0 + for_community_1) == int((sample_com_0 + sample_com_1)*0.25):
-                    print('75% of node processed')
+                    pass
+                    # print('75% of node processed')
                     
     score = np.mean(result)
-    print(f'Change side controversy for {com_type}: {np.mean(score)}')
+    # print(f'Change side controversy for {com_type}: {np.mean(score)}')
     if plot == 1:
         return np.mean(round(score, 4))
     else:

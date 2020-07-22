@@ -17,7 +17,7 @@ def get_edges_to_add(graph, metric, com_type, opt=0):
             result_of_metric = next(metric(graph, [edge]))
             if result_of_metric[2] > 0:
                 to_add.append(result_of_metric)
-                print(len(to_add), end=" ")
+                # print(len(to_add), end=" ")
             if len(to_add) > max_edges_to_add:
                 break
     

@@ -67,11 +67,14 @@ def random_walks(start_graph, sample_size, num_steps, opt=0, plot=0):
                 if int(for_community_0 + for_community_1) <= 0:
                     break
                 elif (for_community_0 + for_community_1) == int((sample_com_0 + sample_com_1)*0.75):
-                    print('25% of node processed')
+                    pass
+                    #print('25% of node processed')
                 elif (for_community_0 + for_community_1) == int((sample_com_0 + sample_com_1)*0.5):
-                    print('50% of node processed')
+                    pass
+                    #print('50% of node processed')
                 elif (for_community_0 + for_community_1) == int((sample_com_0 + sample_com_1)*0.25):
-                    print('75% of node processed')
+                    pass
+                    #print('75% of node processed')
                     
     #print(f'start_0_end_0: {start_0_end_0}')
     #print(f'start_1_end_0: {start_1_end_0}')
@@ -90,7 +93,7 @@ def random_walks(start_graph, sample_size, num_steps, opt=0, plot=0):
     #print(f'start_0_end_1: {start_0_end_1}')
     #print(f'start_1_end_1: {start_1_end_1}') 
     score = start_0_end_0*start_1_end_1-start_1_end_0*start_0_end_1
-    print(f'RandomWalk random score for {com_type}: {round(score, 4)}')
+    # print(f'RandomWalk random score for {com_type}: {round(score, 4)}')
     if plot == 1:
         return round(score, 4)
     else:
@@ -230,8 +233,8 @@ def random_walks_centrality(start_graph, opt=0, plot=0):
     #print(f'start_0_end_1: {start_0_end_1}')
     #print(f'start_1_end_1: {start_1_end_1}')    
     score = start_0_end_0*start_1_end_1-start_1_end_0*start_0_end_1
-    print(f'RandomWalk top degree score for {com_type}: {round(score, 4)}')
-    print()
+    #print(f'RandomWalk top degree score for {com_type}: {round(score, 4)}')
+    #print()
     if plot == 1:
         return round(score, 4)
     else:
