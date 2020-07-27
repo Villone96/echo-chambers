@@ -12,7 +12,7 @@ def get_edges_to_add(graph, metric, com_type, opt=0):
         
     max_edges_to_add = int(sum(total_weight)*0.3)
     
-    for edge in tqdm(non_edge_in_graph):
+    for edge in tqdm(non_edge_in_graph, desc='Compute traditional metrics for unseen edges...'):
         if graph.nodes[edge[0]][com_type] != graph.nodes[edge[1]][com_type]:
             result_of_metric = next(metric(graph, [edge]))
             if result_of_metric[2] > 0:

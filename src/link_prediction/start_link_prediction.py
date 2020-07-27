@@ -11,7 +11,7 @@ from link_prediction.link_pred_launcher import launch_all_link_prediction
 from networkx.algorithms.shortest_paths.generic import average_shortest_path_length
 
 def start_link_opt():
-    garimella()
+    #garimella()
     covid()
     vaccination()
 
@@ -45,6 +45,7 @@ def garimella():
     os.chdir(starting_path)
 
 def covid():
+    print('COVID19')
     starting_path = os.getcwd()
     path = os.path.join(starting_path, 'data/corona_virus/Graph')
     os.chdir(path)
@@ -64,6 +65,7 @@ def covid():
         # for each controversy measure
         for j in range(len(result[i])):
             plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Riduzione controversy per Covid-19 data {contr_detect_method[j]} controversy - Approccio {labels[i]}',  no_contr_values[j], labels[i])
+            #plot_controversy_sentiment_match(result[i][j], [0, 1, 2], f'Riduzione controversy per Covid-19 data {contr_detect_method[j]} controversy - Approccio {labels[i]}',  no_contr_values[j], labels[i])
 
     for i in range(4):
         single_target = list()
@@ -80,6 +82,7 @@ def covid():
 
 
 def vaccination():
+    print('VACCINATION')
     starting_path = os.getcwd()
     path = os.path.join(starting_path, 'data/vax_no_vax/Graph')
     os.chdir(path)

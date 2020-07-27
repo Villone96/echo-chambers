@@ -18,7 +18,7 @@ def add_sentiment_boost(graph, edge_to_add):
 
     edge_to_count = int(total_weight*0.6)
     
-    for edge in tqdm(edge_to_add):
+    for edge in tqdm(edge_to_add, desc='Manage sentiment validity...'):
         sentiment_similarity = int(60 - abs(graph.nodes[edge[0]]['sentiment'] - graph.nodes[edge[1]]['sentiment'])) + 1
         total_edge = 0
         edge_with_sent = 0
@@ -51,10 +51,13 @@ def add_edges(all_edge_to_add, graph, avg_short_path, com_type='weightComm', opt
     weight = int(np.mean(total_weight))
     cont_to_add = int(sum(total_weight)*0.3)
     
-    print_at = int(cont_to_add/30)
+    print_at = int(cont_to_add/15)
     
     cont = 0
-    
+
+    number_of_iterations = 0
+    print(number_of_iterations, end=', ')
+
     rw_value.append(random_walks(graph, 0.6, avg_short_path, opt, 1))
     rwc_value.append(random_walks_centrality(graph, opt, 1))
     change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
@@ -66,6 +69,8 @@ def add_edges(all_edge_to_add, graph, avg_short_path, com_type='weightComm', opt
         cont_to_add -= weight
         cont += weight
         if cont >= print_at:
+            number_of_iterations += 1
+            print(number_of_iterations, end=', ')
             rw_value.append(random_walks(graph, 0.6, avg_short_path, opt, 1))
             rwc_value.append(random_walks_centrality(graph, opt, 1))
             change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
@@ -73,11 +78,13 @@ def add_edges(all_edge_to_add, graph, avg_short_path, com_type='weightComm', opt
             #print()
             cont = 0
         if cont_to_add < 0:
-            rw_value.append(random_walks(graph, 0.6, avg_short_path, opt, 1))
-            rwc_value.append(random_walks_centrality(graph, opt, 1))
-            change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
-            gmck.append(start_GMCK(graph, com_type, opt, 1))
-            print()
+            number_of_iterations += 1
+            #rw_value.append(random_walks(graph, 0.6, avg_short_path, opt, 1))
+            #rwc_value.append(random_walks_centrality(graph, opt, 1))
+            #change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
+            #gmck.append(start_GMCK(graph, com_type, opt, 1))
+            #print()
+            print(number_of_iterations)
             break
             
     return [rw_value, rwc_value, change_side, gmck]
@@ -92,9 +99,11 @@ def plot_controversy_measure_line(values, title, no_contr_value):
     linestyle = [':', '-.', '--', '-', ':', '-.']
     labels = ['Adamic Adar Index', 'Resource Allocation Index', 'Top Degree Link Prediction', 'Top Betweness Link Prediction', 'Top to normal Degree Prediction']
     
-    for i in range(0, 31):
-        x_values.append(i/100)
-        
+    k = 0
+    for i in range(0, len(values)):
+        x_values.append(k/100)
+        k += 2
+
     x_indexes = np.arange(len(x_values))
     
     for contr_value in values:
@@ -122,14 +131,17 @@ def plot_controversy_sentiment_match(no_sent, sent, title, no_contr_value, metho
     linestyle = [':', '-.']
     labels = [f'{methodology} senza sentiment', f'{methodology} con sentiment']
     
-    #for i in range(0, 31):
-    #    x_values.append(i/100)
-        
-    # x_indexes = np.arange(len(x_values))
-    x_indexes = np.arange(4)
+    k = 0
+    for i in range(0, len(values)):
+        x_values.append(k/100)
+        k += 2
+
+    x_indexes = np.arange(len(x_values))
     
+    print(x_indexes)
+    print(no_sent)
     ax.plot(x_indexes, no_sent, color=colors[0], marker=marker[0], linestyle=linestyle[0], label=labels[0])
-    ax.plot(x_indexes, sent, color=colors[1], marker=marker[1], linestyle=linestyle[1], label=labels[1])
+    #ax.plot(x_indexes, sent, color=colors[1], marker=marker[1], linestyle=linestyle[1], label=labels[1])
         
     ax.axhline(no_contr_value, color='#ff0000', label='Score su grafo senza controversy')
     ax.set_xlabel('% archi aggiunti')

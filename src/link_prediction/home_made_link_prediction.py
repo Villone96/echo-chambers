@@ -79,7 +79,7 @@ def get_edges_to_add_bet(start_graph, com_type, opt=0):
         edge_to_add = add_sentiment_boost(start_graph, edge_to_add)
         sorted_to_add = sorted(sorted_to_add, key=lambda tup: tup[2], reverse=True)
     else:
-        sorted_to_add = sorted(edge_to_add, key=lambda tup: tup[2], reverse=True)
+        sorted_to_add = sorted(sorted_to_add, key=lambda tup: tup[2], reverse=True)
     
     return sorted_to_add
 
