@@ -26,7 +26,7 @@ def garimella():
 
     for graph in list_of_graph:
         name = graph
-        if 'Multi' in name or 'log' in name or 'kissing' in name or 'png' in name:
+        if 'Multi' in name or 'log' in name or 'kissing' in name or 'png' in name or 'Riduzione' in name:
             continue
         else:
             print(name)
@@ -58,14 +58,7 @@ def covid():
     # shortest_path = average_shortest_path_length(tmp_graph)
     shortest_path = 25.596369322723653
 
-    result, result_sentiment = launch_all_link_prediction('Final_Graph_Covid.gml', shortest_path, 'weightComm', 1)
-
-    # for each link prediction
-    for i in range(len(result)):
-        # for each controversy measure
-        for j in range(len(result[i])):
-            plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Riduzione controversy per Covid-19 data {contr_detect_method[j]} controversy - Approccio {labels[i]}',  no_contr_values[j], labels[i])
-            #plot_controversy_sentiment_match(result[i][j], [0, 1, 2], f'Riduzione controversy per Covid-19 data {contr_detect_method[j]} controversy - Approccio {labels[i]}',  no_contr_values[j], labels[i])
+    result, result_sentiment = launch_all_link_prediction('Final_Graph_Covid.gml', shortest_path, 'sentimentComm', 1)
 
     for i in range(4):
         single_target = list()
@@ -74,9 +67,15 @@ def covid():
 
         plot_controversy_measure_line(single_target, f'Riduzione controversy per Covid-19 data {contr_detect_method[i]} controversy', no_contr_values[i])
 
+    # for each link prediction
     for i in range(len(result)):
+        # for each controversy measure
         for j in range(len(result[i])):
-            plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Differenza riduzione controversy per Covid-19 tenendo conto del sentiment data {contr_detect_method[j]} controversy',  no_contr_values[i], labels[i])
+            plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Differenza riduzione controversy per Covid-19 tenendo conto del sentiment data {contr_detect_method[j]} controversy',  no_contr_values[j], labels[i])
+
+    #for i in range(len(result)):
+    #    for j in range(len(result[i])):
+    #        plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Differenza riduzione controversy per Covid-19 tenendo conto del sentiment data {contr_detect_method[j]} controversy',  no_contr_values[i], labels[i])
     
     os.chdir(starting_path)
 

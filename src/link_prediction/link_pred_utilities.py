@@ -55,6 +55,8 @@ def add_edges(all_edge_to_add, graph, avg_short_path, com_type='weightComm', opt
     
     cont = 0
 
+    iterations = 15
+
     number_of_iterations = 0
     print(number_of_iterations, end=', ')
 
@@ -66,7 +68,6 @@ def add_edges(all_edge_to_add, graph, avg_short_path, com_type='weightComm', opt
     
     for edge in all_edge_to_add:
         graph.add_edge(edge[0], edge[1], weight=weight)
-        cont_to_add -= weight
         cont += weight
         if cont >= print_at:
             number_of_iterations += 1
@@ -76,14 +77,16 @@ def add_edges(all_edge_to_add, graph, avg_short_path, com_type='weightComm', opt
             change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
             gmck.append(start_GMCK(graph, com_type, opt, 1))
             #print()
+            iterations -= 1
             cont = 0
-        if cont_to_add < 0:
+        if iterations == 0:
             number_of_iterations += 1
-            #rw_value.append(random_walks(graph, 0.6, avg_short_path, opt, 1))
-            #rwc_value.append(random_walks_centrality(graph, opt, 1))
-            #change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
-            #gmck.append(start_GMCK(graph, com_type, opt, 1))
-            #print()
+            if len(rwc_value) <= 15:
+                rw_value.append(random_walks(graph, 0.6, avg_short_path, opt, 1))
+                rwc_value.append(random_walks_centrality(graph, opt, 1))
+                change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
+                gmck.append(start_GMCK(graph, com_type, opt, 1))
+                print()
             print(number_of_iterations)
             break
             
@@ -100,11 +103,14 @@ def plot_controversy_measure_line(values, title, no_contr_value):
     labels = ['Adamic Adar Index', 'Resource Allocation Index', 'Top Degree Link Prediction', 'Top Betweness Link Prediction', 'Top to normal Degree Prediction']
     
     k = 0
-    for i in range(0, len(values)):
+    for i in range(0, len(values[0])):
         x_values.append(k/100)
         k += 2
 
     x_indexes = np.arange(len(x_values))
+
+    #print(x_indexes)
+    #print(values[0])
     
     for contr_value in values:
         index = values.index(contr_value)
@@ -120,7 +126,7 @@ def plot_controversy_measure_line(values, title, no_contr_value):
 
     plt.grid(True)
 
-    plt.savefig(f'./{title}.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)
+    plt.savefig(f'./Riduzione_Controversy/{title}.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)
 
 def plot_controversy_sentiment_match(no_sent, sent, title, no_contr_value, methodology):
     fig, ax = plt.subplots()
@@ -132,16 +138,16 @@ def plot_controversy_sentiment_match(no_sent, sent, title, no_contr_value, metho
     labels = [f'{methodology} senza sentiment', f'{methodology} con sentiment']
     
     k = 0
-    for i in range(0, len(values)):
+    for i in range(0, len(no_sent)):
         x_values.append(k/100)
         k += 2
 
     x_indexes = np.arange(len(x_values))
     
-    print(x_indexes)
-    print(no_sent)
+    #print(x_indexes)
+    #print(no_sent)
     ax.plot(x_indexes, no_sent, color=colors[0], marker=marker[0], linestyle=linestyle[0], label=labels[0])
-    #ax.plot(x_indexes, sent, color=colors[1], marker=marker[1], linestyle=linestyle[1], label=labels[1])
+    ax.plot(x_indexes, sent, color=colors[1], marker=marker[1], linestyle=linestyle[1], label=labels[1])
         
     ax.axhline(no_contr_value, color='#ff0000', label='Score su grafo senza controversy')
     ax.set_xlabel('% archi aggiunti')
@@ -153,4 +159,4 @@ def plot_controversy_sentiment_match(no_sent, sent, title, no_contr_value, metho
 
     plt.grid(True)
 
-    plt.savefig(f'./{title}.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)
+    plt.savefig(f'./Riduzione_Controversy_sentiment/{title}.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)

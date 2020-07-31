@@ -143,7 +143,7 @@ def start_random_walks(node, graph, steps):
     return result
 
 
-def top_out_degree(graph, perc, com):
+def top_out_degree(graph, perc, com, opt=0):
     cont_com = 0
     
     for node in graph.nodes(data=True):
@@ -158,7 +158,10 @@ def top_out_degree(graph, perc, com):
     top_user = list()
     for node in top_out_degree_sorted:
         if graph.nodes[node]['com'] == com:
-            top_user.append(node)
+            if opt == 1:
+                top_user.append((node, top_out_degree_sorted[node]))
+            else:
+                top_user.append(node)
             num_nodes -= 1
         if num_nodes == 0:
             break 

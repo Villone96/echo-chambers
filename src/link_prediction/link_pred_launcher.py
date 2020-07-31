@@ -15,25 +15,6 @@ def launch_all_link_prediction(graph_name, shortest_path, com_type, add_sent_boo
     result = list()
     result_sentiment = list()
 
-    ## NORMAL TO TOP DEGREE
-    print('NORMAL TO TOP DEGREE')
-    print('NO SENTIMENT')
-    tmp_graph = nx.read_gml(graph_name)
-    selected_edges = add_top_deg_to_normal(tmp_graph, com_type, 0)
-    result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
-
-    if add_sent_boost == 1:
-        print('SENTIMENT')
-        result_sentiment.append(manage_sentiment(graph_name, selected_edges, shortest_path))
-    print()
-
-
-    return result, result_sentiment
-
-
-
-
-'''
     ## ADAMIC 
     print('ADAMIC')
     print('NO SENTIMENT')
@@ -57,10 +38,10 @@ def launch_all_link_prediction(graph_name, shortest_path, com_type, add_sent_boo
         result_sentiment.append(manage_sentiment(graph_name, selected_edges, shortest_path))
 
     ## TOP DEGREE
-    print('TOP DEGRE')
+    print('TOP DEGREE')
     print('NO SENTIMENT')
     tmp_graph = nx.read_gml(graph_name)
-    selected_edges = get_edges_to_add_degree(tmp_graph, com_type, 0)
+    selected_edges = get_edges_to_add_degree(tmp_graph, com_type)
     result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
 
     if add_sent_boost == 1:
@@ -71,10 +52,33 @@ def launch_all_link_prediction(graph_name, shortest_path, com_type, add_sent_boo
     print('TOP BET')
     print('NO SENTIMENT')
     tmp_graph = nx.read_gml(graph_name)
-    selected_edges = get_edges_to_add_bet(tmp_graph, com_type, 0)
+    selected_edges = get_edges_to_add_bet(tmp_graph, com_type)
     result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
 
     if add_sent_boost == 1:
         print('SENTIMENT')
         result_sentiment.append(manage_sentiment(graph_name, selected_edges, shortest_path))
-    '''
+
+
+    ## NORMAL TO TOP DEGREE
+    print('NORMAL TO TOP DEGREE')
+    print('NO SENTIMENT')
+    tmp_graph = nx.read_gml(graph_name)
+    selected_edges = add_top_deg_to_normal(tmp_graph, com_type)
+    result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
+
+    if add_sent_boost == 1:
+        print('SENTIMENT')
+        result_sentiment.append(manage_sentiment(graph_name, selected_edges, shortest_path))
+    print()
+
+
+
+    return result, result_sentiment
+
+
+'''
+
+
+
+'''
