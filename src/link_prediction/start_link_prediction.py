@@ -9,6 +9,7 @@ from link_prediction.home_made_link_prediction import get_edges_to_add_degree, g
 from link_prediction.link_pred_launcher import launch_all_link_prediction
 
 from networkx.algorithms.shortest_paths.generic import average_shortest_path_length
+import pickle
 
 def start_link_opt():
     #garimella()
@@ -71,11 +72,17 @@ def covid():
     for i in range(len(result)):
         # for each controversy measure
         for j in range(len(result[i])):
-            plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Differenza riduzione controversy per Covid-19 tenendo conto del sentiment data {contr_detect_method[j]} controversy',  no_contr_values[j], labels[i])
+            plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Valutazione sentiment approccio {labels[i]} per {contr_detect_method[j]} controversy',  no_contr_values[j], labels[i])
 
     #for i in range(len(result)):
     #    for j in range(len(result[i])):
     #        plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Differenza riduzione controversy per Covid-19 tenendo conto del sentiment data {contr_detect_method[j]} controversy',  no_contr_values[i], labels[i])
+
+    with open('result_no_sent', 'wb') as f:
+        pickle.dump(result, f)
+
+    with open('result_sent', 'wb') as f:
+        pickle.dump(result_sentiment, f)
     
     os.chdir(starting_path)
 

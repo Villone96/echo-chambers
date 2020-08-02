@@ -133,3 +133,9 @@ dmypy.json
 
 # code snippets
 **/src/Code_snippets.ipynb
+
+# visual studio
+.vscode
+
+# ds store
+.DS_Store
