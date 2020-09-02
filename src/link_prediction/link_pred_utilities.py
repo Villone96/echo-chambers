@@ -103,7 +103,7 @@ def plot_controversy_measure_line(values, title, no_contr_value):
     labels = ['Adamic Adar Index', 'Resource Allocation Index', 'Top Degree Link Prediction', 'Top Betweness Link Prediction', 'Top to normal Degree Prediction']
     
     k = 0
-    for i in range(0, len(values[0])):
+    for _ in range(0, len(values[0])):
         x_values.append(k/100)
         k += 2
 
