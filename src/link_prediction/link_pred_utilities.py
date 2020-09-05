@@ -61,7 +61,7 @@ def add_edges(all_edge_to_add, graph, avg_short_path, com_type='weightComm', opt
     print(number_of_iterations, end=', ')
 
     rw_value.append(random_walks(graph, 0.6, avg_short_path, opt, 1))
-    rwc_value.append(random_walks_centrality(graph, opt, 1))
+    rwc_value.append(random_walks_centrality(graph, avg_short_path, opt, 1))
     change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
     gmck.append(start_GMCK(graph, com_type, opt, 1))
     #print()
@@ -73,7 +73,7 @@ def add_edges(all_edge_to_add, graph, avg_short_path, com_type='weightComm', opt
             number_of_iterations += 1
             print(number_of_iterations, end=', ')
             rw_value.append(random_walks(graph, 0.6, avg_short_path, opt, 1))
-            rwc_value.append(random_walks_centrality(graph, opt, 1))
+            rwc_value.append(random_walks_centrality(graph, avg_short_path, opt, 1))
             change_side.append(change_side_controversy(graph, 0.6, avg_short_path, opt, 1))
             gmck.append(start_GMCK(graph, com_type, opt, 1))
             #print()

@@ -12,9 +12,9 @@ from networkx.algorithms.shortest_paths.generic import average_shortest_path_len
 import pickle
 
 def start_link_opt():
-    garimella()
-    #covid()
-    #vaccination()
+    #garimella()
+    covid()
+    vaccination()
 
 
 def garimella():
@@ -23,11 +23,11 @@ def garimella():
     os.chdir(path)
     list_of_graph = os.listdir(path)
     contr_detect_method = ['RandomWalks', 'RandomWalks top degree', 'Change Side', 'GMCK']
-    no_contr_values = [0.4933, 0.6869,  0.7436, 0.0213]
+    no_contr_values = [0.4997, 0.6768,  0.7436, 0.0213]
 
     for graph in list_of_graph:
         name = graph
-        if 'Multi' in name or 'log' in name or 'kissing' in name or 'png' in name or 'Riduzione' in name or '_' in name:
+        if 'Multi' in name or 'log' in name or 'kissing' in name or 'png' in name or 'Riduzione' in name or '_' in name or 'beef' in name:
             continue
         else:
             print(name)
