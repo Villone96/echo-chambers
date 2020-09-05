@@ -27,7 +27,7 @@ def garimella():
 
     for graph in list_of_graph:
         name = graph
-        if 'Multi' in name or 'log' in name or 'kissing' in name or 'png' in name or 'Riduzione' in name or '_' in name or 'beef' in name:
+        if 'Multi' in name or 'log' in name or 'kissing' in name or 'png' in name or 'Riduzione' in name or '_' in name:
             continue
         else:
             print(name)

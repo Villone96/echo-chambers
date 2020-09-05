@@ -11,7 +11,7 @@ def manage_sentiment(graph_name, selected_edges, shortest_path, save_name):
     edge_to_add = add_sentiment_boost(tmp_graph, selected_edges)
     selected_edges_sent = sorted(edge_to_add, key=lambda tup: tup[2], reverse=True)
     print(nx.info(tmp_graph))
-    single_value = add_edges(selected_edges_sent, tmp_graph, shortest_path*2, 1)
+    single_value = add_edges(selected_edges_sent, tmp_graph, shortest_path*2, 'sentimentComm', 1)
     nx.write_gml(tmp_graph, f'./{save_name}.gml')
     print(nx.info(tmp_graph))
     return single_value
@@ -42,21 +42,21 @@ def launch_all_link_prediction(graph_name, shortest_path, com_type, add_sent_boo
         result_sentiment.append(manage_sentiment(graph_name, selected_edges, shortest_path, name))
     print()
 
-    ## RESOURCE ALLOCATION INDEX
-    print('RESOURCE')
+    ## JACCARD COEFFICIENT INDEX
+    print('JACCARD_COEFFICIENT')
     print('NO SENTIMENT')
     tmp_graph = nx.read_gml(graph_name)
     print(nx.info(tmp_graph))
-    selected_edges = get_edges_to_add(tmp_graph, resource_allocation_index, com_type, 0)
+    selected_edges = get_edges_to_add(tmp_graph, jaccard_coefficient, com_type, 0)
     result.append(add_edges(selected_edges, tmp_graph, shortest_path*2, com_type, opt))
     print(nx.info(tmp_graph))
-    name = graph_name.split('.')[0]+'_RESOURCE'
+    name = graph_name.split('.')[0]+'_JACCARD_COEFFICIENT'
     nx.write_gml(tmp_graph, f'./{name}.gml')
     
 
     if add_sent_boost == 1:
         print('SENTIMENT')
-        name = graph_name.split('.')[0]+'_RESOURCE_SENT'
+        name = graph_name.split('.')[0]+'_JACCARD_COEFFICIENT_SENT'
         result_sentiment.append(manage_sentiment(graph_name, selected_edges, shortest_path, name))
     print()
 

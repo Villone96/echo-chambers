@@ -100,7 +100,7 @@ def plot_controversy_measure_line(values, title, no_contr_value):
     colors = ['#0425e0', '#e0e004', '#ffd470', '#3c6b6b', '#720878']
     x_values = list()
     linestyle = [':', '-.', '--', '-', ':', '-.']
-    labels = ['Adamic Adar Index', 'Resource Allocation Index', 'Top Degree Link Prediction', 'Top Betweness Link Prediction', 'Top to normal Degree Prediction']
+    labels = ['Adamic Adar Index', 'Jaccard’s Coefficient', 'Top Degree Link Prediction', 'Top Betweness Link Prediction', 'Top to normal Degree Prediction']
     
     k = 0
     for _ in range(0, len(values[0])):
