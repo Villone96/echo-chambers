@@ -2,7 +2,7 @@ import networkx as nx
 from networkx.algorithms.community.quality import coverage 
 from tqdm import tqdm
 import networkx.algorithms.community as nx_comm
-#import nxmetis
+import nxmetis
 import time
 from math import ceil
 from random import random, randint
