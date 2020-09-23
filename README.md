@@ -7,13 +7,13 @@ The project concerns the development of a pipeline for controversy reduction on 
 #### Folder
 In the src folder you can find:
 
-* main.py: launcher of entire pipeline.
+* **main.py**: launcher of entire pipeline.
 preprocessing: it contains all functions for graph building activities
-* community: it contains all functions about community detection activities and community tracking metrics assessments. After this step a summary log_community file is created. 
-* controversy_detection: it contains all functions about controversy detection metrics used, a log file that contains a info about metrics values it is created after each run.
-* link_prediction: it contains all function about links prediction strategy (state of arts strategy and homemade strategy as well), a plot result will be provided after running.
-* community Analysis & Code Snippets: a jupyter notebooks that contain community metadata analysis and access graph activities. The second one is not necessary in this study.
-* analysis_images: it contains, for each dataset, a set of images about analysis (metadata, controversy reduction, ecc.).
+* **community**: it contains all functions about community detection activities and community tracking metrics assessments. After this step a summary log_community file is created. 
+* **controversy_detection**: it contains all functions about controversy detection metrics used, a log file that contains a info about metrics values it is created after each run.
+* **link_prediction**: it contains all function about links prediction strategy (state of arts strategy and homemade strategy as well), a plot result will be provided after running.
+* **community Analysis & Code Snippets**: a jupyter notebooks that contain community metadata analysis and access graph activities. The second one is not necessary in this study.
+* **analysis_images**: it contains, for each dataset, a set of images about analysis (metadata, controversy reduction, ecc.).
 
 In the discussion folder you can find (not yet here):
 ```
