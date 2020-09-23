@@ -28,7 +28,7 @@ src/data/vaccination/raw_data: it will contain all raw data (csv file) (look at 
 src/data/garimella_data/retweet_networks: it will contain all raw data (txt file) about #beefban, 
                                           #nationalkissingday and #ukrain (look at the top for them).
 ```
-launch the following command:
+and launch the following command:
 ```
 python main
 ```
