@@ -25,9 +25,9 @@ def link_prediction():
     start_link_opt()
 
 if __name__ == '__main__':
-    #preprocessing_operation()
-    #community_detection()
-    #controversy_detection()
+    preprocessing_operation()
+    community_detection()
+    controversy_detection()
     link_prediction()
 
 
