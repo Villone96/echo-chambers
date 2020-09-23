@@ -12,8 +12,8 @@ from networkx.algorithms.shortest_paths.generic import average_shortest_path_len
 import pickle
 
 def start_link_opt():
-    #garimella()
-    #covid()
+    garimella()
+    covid()
     vaccination()
 
 
@@ -116,53 +116,9 @@ def vaccination():
         for j in range(len(result[i])):
             plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Valutazione sentiment approccio {labels[i]} per {contr_detect_method[j]} controversy',  no_contr_values[j], labels[i])
 
-    #for i in range(len(result)):
-    #    for j in range(len(result[i])):
-    #        plot_controversy_sentiment_match(result[i][j], result_sentiment[i][j], f'Differenza riduzione controversy per Covid-19 tenendo conto del sentiment data {contr_detect_method[j]} controversy',  no_contr_values[i], labels[i])
-
     with open('result_no_sent_vax', 'wb') as f:
         pickle.dump(result, f)
 
     with open('result_sent_vax', 'wb') as f:
         pickle.dump(result_sentiment, f)
     os.chdir(starting_path)
-
-
-
-
-
-
-'''
-            print(name)
-
-            print('adamic_adar_index')
-            tmp_graph = nx.read_gml(f'{name}.gml')
-            selected_edges = get_edges_to_add(tmp_graph, adamic_adar_index, 'weightComm', 0)
-            result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
-            print()
-
-            print('resource_allocation_index')
-            tmp_graph = nx.read_gml(f'{name}.gml')
-            selected_edges = get_edges_to_add(tmp_graph, resource_allocation_index, 'weightComm', 0)
-            result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
-            print()
-
-            print('top degree add')
-            tmp_graph = nx.read_gml(f'{name}.gml')
-            selected_edges = get_edges_to_add_degree(tmp_graph, 'weightComm')
-            result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
-            print()
-
-            print('top bet add')
-            tmp_graph = nx.read_gml(f'{name}.gml')
-            selected_edges = get_edges_to_add_bet(tmp_graph, 'weightComm')
-            result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
-            print()
-
-            tmp_graph = nx.read_gml(f'{name}.gml')
-            selected_edges = add_top_deg_to_normal(tmp_graph, 'weightComm', 0)
-            result.append(add_edges(selected_edges, tmp_graph, shortest_path*2))
-            print()
-
-
-'''
