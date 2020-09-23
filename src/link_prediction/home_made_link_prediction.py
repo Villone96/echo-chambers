@@ -98,7 +98,6 @@ def add_top_deg_to_normal(start_graph, com_type):
     top_com_1 = top_out_degree(graph, 25, 1, 1)
     
     max_edges_to_add = int(sum(total_weight)*0.3)
-
     to_add = list()
 
     to_add_for_node = int(max_edges_to_add/len(start_graph))

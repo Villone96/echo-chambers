@@ -108,7 +108,7 @@ def launch_all_link_prediction(graph_name, shortest_path, com_type, add_sent_boo
 
     if add_sent_boost == 1:
         print('SENTIMENT')
-        name = graph_name.split('.')[0]+'NORMAL_TOP_DEGREE_SENT'
+        name = graph_name.split('.')[0]+'_NORMAL_TOP_DEGREE_SENT'
         result_sentiment.append(manage_sentiment(graph_name, selected_edges, shortest_path, name))
     print()
 

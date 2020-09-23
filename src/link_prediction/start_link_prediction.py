@@ -13,7 +13,7 @@ import pickle
 
 def start_link_opt():
     #garimella()
-    covid()
+    #covid()
     vaccination()
 
 
@@ -51,7 +51,7 @@ def covid():
     path = os.path.join(starting_path, 'data/corona_virus/Graph')
     os.chdir(path)
     contr_detect_method = ['RandomWalks', 'RandomWalks top degree', 'Change Side', 'GMCK']
-    labels = ['Adamic adar index', 'Resource allocation index', 'Top degree link prediction', 'Top betweness link prediction', 'Top to normal degree prediction']
+    labels = ['Adamic adar index', 'Jaccard’s Coefficient', 'Top degree link prediction', 'Top betweness link prediction', 'Top to normal degree prediction']
     no_contr_values = [0.4933, 0.6869,  0.7436, 0.0213]
     result = list()
     result_sentiment = list()
@@ -92,7 +92,7 @@ def vaccination():
     starting_path = os.getcwd()
     path = os.path.join(starting_path, 'data/vax_no_vax/Graph')
     os.chdir(path)
-    labels = ['Adamic adar index', 'Resource allocation index', 'Top degree link prediction', 'Top betweness link prediction', 'Top to normal degree prediction']
+    labels = ['Adamic adar index', 'Jaccard’s Coefficient', 'Top degree link prediction', 'Top betweness link prediction', 'Top to normal degree prediction']
     contr_detect_method = ['RandomWalks', 'RandomWalks top degree', 'Change Side', 'GMCK']
     no_contr_values = [0.4933, 0.6869,  0.7436, 0.0213]
     result = list()
