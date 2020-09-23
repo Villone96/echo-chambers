@@ -3,6 +3,9 @@
 ### Villa Giacomo
 
 The project concerns the development of a pipeline for controversy reduction on Social Media. Part of the datasets used can be found at [Garimella Dataset](https://github.com/gvrkiran/controversy-detection/tree/master/networks/retweet_networks), Vaccination dataset can be found at [Kaggle Dataset](https://www.kaggle.com/keplaxo/twitter-vaccination-dataset), only Covid-19 dataset isn't freely accessible; in case of necessity, it will be share under request.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/24355671/94059167-56dd4780-fde2-11ea-92ae-c3c1334d45d2.png">
+</p>
 
 #### Folder
 In the src folder you can find:
@@ -32,4 +35,6 @@ and launch the following command:
 ```
 python main
 ```
+#### Main libraries used
+[tqdm](https://pypi.org/project/tqdm/), [NetworkX](https://networkx.github.io/), [numpy](https://numpy.org/), [NetworkX-METIS](https://networkx-metis.readthedocs.io/en/latest/index.html)
 
