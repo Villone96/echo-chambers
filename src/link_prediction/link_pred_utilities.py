@@ -114,15 +114,18 @@ def plot_controversy_measure_line(values, title, no_contr_value):
     
     for contr_value in values:
         index = values.index(contr_value)
-        ax.plot(x_indexes, contr_value, color=colors[index], marker=marker[index], linestyle=linestyle[index], label=labels[index])
+        ax.plot(x_indexes, contr_value, color=colors[index], marker=marker[index], linestyle=linestyle[index], label=labels[index], linewidth=4)
         
     ax.axhline(no_contr_value, color='#ff0000', label='Score su grafo senza controversy')
-    ax.set_xlabel('% archi aggiunti')
-    ax.set_ylabel('Score controversy')
-    ax.set_title(title)
-    ax.legend()
+    ax.set_xlabel('% archi aggiunti', fontsize=30)
+    ax.set_ylabel('Score controversy', fontsize=30)
+
+    ax.set_title(title, fontsize=30)
+    ax.legend(prop={"size":30})
     
     plt.xticks(ticks=x_indexes, labels=x_values)
+    ax.xaxis.set_tick_params(labelsize=21)
+    ax.yaxis.set_tick_params(labelsize=21)
 
     plt.grid(True)
 
@@ -146,17 +149,23 @@ def plot_controversy_sentiment_match(no_sent, sent, title, no_contr_value, metho
     
     #print(x_indexes)
     #print(no_sent)
-    ax.plot(x_indexes, no_sent, color=colors[0], marker=marker[0], linestyle=linestyle[0], label=labels[0])
-    ax.plot(x_indexes, sent, color=colors[1], marker=marker[1], linestyle=linestyle[1], label=labels[1])
+    ax.plot(x_indexes, no_sent, color=colors[0], marker=marker[0], linestyle=linestyle[0], label=labels[0], linewidth=4)
+    ax.plot(x_indexes, sent, color=colors[1], marker=marker[1], linestyle=linestyle[1], label=labels[1], linewidth=4)
         
     ax.axhline(no_contr_value, color='#ff0000', label='Score su grafo senza controversy')
-    ax.set_xlabel('% archi aggiunti')
-    ax.set_ylabel('Score controversy')
-    ax.set_title(title)
-    ax.legend()
+    ax.set_xlabel('% archi aggiunti', fontsize=30)
+    ax.set_ylabel('Score controversy', fontsize=30)
+    ax.set_title(title, fontsize=22)
+    ax.legend(prop={"size":30})
     
     plt.xticks(ticks=x_indexes, labels=x_values)
+    
+    ax.xaxis.set_tick_params(labelsize=21)
+    ax.yaxis.set_tick_params(labelsize=21)
+    
 
     plt.grid(True)
+
+    plt.savefig(f'./Riduzione_Controversy_sentiment/{title}.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)
 
     plt.savefig(f'./Riduzione_Controversy_sentiment/{title}.png', dpi = 300, quality = 95, format = 'png', pad_inches = 1000)
