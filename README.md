@@ -11,7 +11,7 @@ The project concerns the development of a pipeline for controversy reduction on 
 In the src folder you can find:
 
 * **main.py**: launcher of entire pipeline.
-preprocessing: it contains all functions for graph building activities
+* **preprocessing**: it contains all functions for graph building activities
 * **community**: it contains all functions about community detection activities and community tracking metrics assessments. After this step a summary log_community file is created. 
 * **controversy_detection**: it contains all functions about controversy detection metrics used, a log file that contains a info about metrics values it is created after each run.
 * **link_prediction**: it contains all function about links prediction strategy (state of arts strategy and homemade strategy as well), a plot result will be provided after running.
