@@ -20,7 +20,8 @@ In the src folder you can find:
 
 In the discussion folder you can find (not yet here):
 ```
-TODO
+discussion/presentation.pdf: presentation used to show during thesis work
+discussion/thesis.pdf: full thesis
 ```
 #### How to run
 In order to run the pipeline is necessary creates the following folders:
